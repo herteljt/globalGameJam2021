@@ -79,14 +79,14 @@ function grid_coords_to_pixels(grid_x, grid_y)
        or grid_x < 0
        or grid_y > world_data.grid.height - 1
        or grid_y < 0) then
-      print("ERROR: tried to draw something out of bounds")
+      print("ERROR: tried to compute grid coords out of bounds")
       return -1, -1
    end
 
    local top_of_grid = 3 * 64
    local left_of_grid = 0
-   local right_of_grid = 1024
-   local bottom_of_grid = 768
+   local right_of_grid = world_data.grid.width * 64
+   local bottom_of_grid = world_data.grid.height * 64
 
    local pixels_x = grid_x * 64 + left_of_grid
    local pixels_y = grid_y * 64 + top_of_grid
