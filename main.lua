@@ -15,12 +15,46 @@ world_data = {
    grid = {
       width = 16,
       height = 9,
+      border = 0,
    },
+}
+
+ -- Keeping track of keyboard state. If key is not pressed, state is false.
+keyState = {
+  up = {
+    pressed = false,
+    enabled = true
+  },
+  down = {
+    pressed = false,
+    enabled = true
+  },
+  left = {
+    pressed = false,
+    enabled = true
+  },
+  right = {
+    pressed = false,
+    enabled = true
+  },
 }
 
 -- initialized at game launch
 function love.load()
    print("Loading game...")
+
+
+  -- player
+  player = {}
+    player.x = 4
+    player.y = 3
+    player.width = 1
+    player.height = 1
+    player.bullets = {}
+    player.step = player.width
+    player.speed = 1
+    player.score = 0
+
 
    -- images
    assets.images.background = love.graphics.newImage("graphics/background.png")
@@ -40,6 +74,66 @@ end
 -- runs continuously. logic and game state updates go here
 function love.update()
    -- print("spamming the console log XD")
+
+   -- Player movement
+     if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
+       player.x = player.x + player.step
+       keyState.right.pressed = true
+     elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and keyState.left.pressed == false then
+       player.x = player.x - player.step
+       keyState.left.pressed = true
+     end
+     if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and keyState.up.pressed == false and keyState.up.enabled == true then
+       player.y = player.y - player.step
+       keyState.up.pressed = true
+     elseif (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and keyState.down.pressed == false then
+       player.y = player.y + player.step
+       keyState.down.pressed = true
+     end
+
+
+     -- Prevent player from going offscreen
+       if player.x < world_data.grid.border then
+         player.x = world_data.grid.border
+       end
+
+       if player.x > world_data.grid.width - player.width - world_data.grid.border then
+         player.x = world_data.grid.width - player.width - world_data.grid.border
+       end
+
+       if player.y < world_data.grid.border then
+         player.y = world_data.grid.border
+       end
+
+       if player.y > world_data.grid.height - player.height - world_data.grid.border then
+         player.y = world_data.grid.height - player.height - world_data.grid.border
+       end
+
+
+
+        -- Checking that I can enabled/disable keys. This is buggy because of the number of times love updates
+        if love.keyboard.isDown('space') then
+         if keyState.up.enabled == true then
+           keyState.up.enabled = false
+           print("Up disabled")
+         else
+           keyState.up.enabled = true
+           print("Up enabled")
+         end
+       end
+
+
+       -- end program
+           if love.keyboard.isDown('escape') then
+              love.event.quit()
+           end
+
+       -- reset program
+           if love.keyboard.isDown('r') then
+              love.event.quit("restart")
+           end
+
+
 end
 
 
@@ -48,7 +142,7 @@ function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
    print_normal("Global Game Jam let's go!!", 12, 18)
    print_header("GGJ 2021", 400, 300)
-   draw_in_grid(assets.images.player, 4, 3)
+   draw_in_grid(assets.images.player, player.x, player.y)
    draw_in_grid(assets.images.obstacle, 1, 1)
    draw_in_grid(assets.images.obstacle, 13, 4)
    draw_in_grid(assets.images.obstacle, 13, 5)
@@ -92,4 +186,41 @@ function grid_coords_to_pixels(grid_x, grid_y)
    local pixels_y = grid_y * 64 + top_of_grid
 
    return pixels_x, pixels_y
+end
+
+
+--Functions to track key pressing
+function love.keypressed( key )
+   if key == "d" or key =="right" then
+      text = "Right has been pressed!"
+   end
+   if key == "a" or key =="left" then
+      text = "Left has been pressed!"
+   end
+   if key == "w" or key =="up" then
+      text = "Up has been pressed!"
+   end
+   if key == "s" or key =="down" then
+      text = "Down has been pressed!"
+   end
+end
+
+
+function love.keyreleased( key )
+   if key == "d" or key =="right" then
+      text = "Right has been released!"
+      keyState.right.pressed = false
+   end
+   if key == "a" or key =="left" then
+      text = "Left has been released!"
+      keyState.left.pressed = false
+   end
+   if key == "w" or key =="up" then
+      text = "Up has been released!"
+      keyState.up.pressed = false
+   end
+   if key == "s" or key =="down" then
+      text = "Down has been released!"
+      keyState.down.pressed = false
+   end
 end

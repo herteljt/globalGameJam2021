@@ -26,12 +26,12 @@ Fromage10x
 herteljt
 
 ### Communication
-Zoom Room Check-In
+Discord Check-In
 - Fri Night ~8:30pm
 - Sat Morning ~9am
 - Sat Night ~8:30pm
 - Sun Morning ~9am
-- Sun Night ~8:30pm
+- Sun Afternoon ~3:00pm
 
 
 ### Brainstorming
