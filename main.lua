@@ -7,6 +7,10 @@ assets = {
       player = nil,
       obstacle = nil,
       fake_avatar = nil,
+      forward = nil,
+      left = nil,
+      right = nil,
+      blank = nil,
    },
    fonts = {
       regular = nil,
@@ -25,9 +29,9 @@ enums = {
 worldData = {
    state = enums.game_states.MAIN_ACTION,
    grid = {
-      width = 16,
-      height = 9,
-      border = 0,
+      width = nil,
+      height = nil,
+      border = nil,
    },
    current_dialogue = {
       name = nil,
@@ -42,17 +46,24 @@ worldData = {
    cursor_blink_time = 0,
 }
 
-commandQueue = { --indices start at 1 in Love2d rather than 0
-0,-- state (0 off, 1 program),
-3,  -- command index initialized to start at the 3rd value
-1, -- 1st command
-2, -- 2nd command
-3, -- 3rd command
-4, -- 4th command
-5,  -- 5th command
+
+-- Command Bar variables.
+commandBar = { --Note: indices start at 1 in Love2d rather than 0
+
+      index = nil, --keeping track of which command is selected
+
+      command = {
+        first = nil, -- 1st command
+        second = nil, -- 2nd command
+        third = nil, -- 3rd command
+        fourth = nil, -- 4th command
+        fifth = nil,  -- 5th command
+        },
+
+        image = {},
 }
 
- -- Keeping track of keyboard state. If key is not pressed, state is false.
+-- Keeping track of keyboard state. If key is not pressed, state is false.
 keyState = {
   up = {
     pressed = false,
@@ -90,7 +101,11 @@ keyState = {
     pressed = false,
     enabled = true
   },
-  five = {
+  backspace = {
+    pressed = false,
+    enabled = true
+  },
+  alt = {
     pressed = false,
     enabled = true
   },
@@ -98,6 +113,18 @@ keyState = {
      pressed = false,
      enabled = true
   }
+}
+
+player = {
+x = nil,
+y = nil,
+width = nil,
+height = nil,
+speed = nil,
+score = nil,
+step = nil,
+facing = nil,
+
 }
 
 -- initialized at game launch
@@ -108,22 +135,38 @@ function love.load()
    waitingTimer = 10
 
   -- player
-  player = {}
     player.x = 4
     player.y = 3
     player.width = 1
     player.height = 1
-    player.bullets = {}
-    player.step = player.width
     player.speed = 1
     player.score = 0
+    player.step = 1
+    player.facing = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
 
+    -- command bar
+    commandBar.index = 1
+    commandBar.image[1]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[2]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[3]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[4]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[5]= love.graphics.newImage("graphics/blank_placeholder.png")
+
+
+    -- world data
+    worldData.grid.width = 16
+    worldData.grid.height = 9
+    worldData.grid.border = 0
 
    -- images
    assets.images.background = love.graphics.newImage("graphics/background.png")
    assets.images.player = love.graphics.newImage("graphics/spaceship_placeholder.png")
    assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
    assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
+   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
+   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
+   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
+   assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
 
    -- fonts
    assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -172,82 +215,107 @@ function love.update(dt)
          player.y = worldData.grid.height - player.height - worldData.grid.border
        end
 
-       -- Enable command input
-       if love.keyboard.isDown('5') and keyState.five.pressed == false then
-         keyState.five.pressed = true
-         print("Enter first command: (1-Forward, 2-Left, 3-Right)")
-         commandQueue[1] = true
-       end
 
        -- Enable command input
-       if love.keyboard.isDown('4') and keyState.four.pressed == false then
-         keyState.four.pressed = true
-         print("Running commands...")
-         for i = 1, 3 do
-           if commandQueue[i+2]==1 then
-             player.x = player.x + player.step
-           end
-           if commandQueue[i+2]==2 then
-             player.y = player.y - player.step
-           end
-           if commandQueue[i+2]==3 then
-             player.y = player.y + player.step
+
+      if love.keyboard.isDown('4') and keyState.four.pressed == false then
+        keyState.four.pressed = true
+        print("Running commands...")
+        for i = 1, 5 do
+          if commandBar.command[i]==1 then
+            player.x = player.x + player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
           end
-         end
-
-       end
-
-
-      -- Lots of copy pasta here. Probably should build a function that does this.
-      if love.keyboard.isDown('1') and keyState.one.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 1   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
-          commandQueue[2] = 3
-        else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          if commandBar.command[i]==2 then
+            player.y = player.y - player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
+          end
+          if commandBar.command[i]==3 then
+            player.y = player.y + player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
+          end
         end
-        print("Current Queue: "..commandQueue[2])
+        commandBar.index = 1
+      end
+
+
+      -- Enable command input
+      if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
+        commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
+        commandBar.image[commandBar.index-1] = assets.images.blank
+        commandBar.index = commandBar.index - 1
+        keyState.backspace.pressed = true
+      end
+
+
+      -- New Commnad Queue Code
+      if love.keyboard.isDown('1') and keyState.one.pressed == false then
+        commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.forward
+        if commandBar.index >= 5 then
+          commandBar.index = 1
+        else
+          commandBar.index = commandBar.index + 1 -- shift the command question position
+        end
         keyState.one.pressed = true
       end
 
-      if love.keyboard.isDown('2') and keyState.two.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 2   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
-          commandQueue[2] = 3
+      if love.keyboard.isDown('2') and keyState.two.pressed == false then
+        commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.left
+        if commandBar.index >= 5 then
+          commandBar.index = 1
         else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          commandBar.index = commandBar.index + 1 -- shift the command question position
         end
-        print("Current Queue: "..commandQueue[2])
         keyState.two.pressed = true
       end
 
-      if love.keyboard.isDown('3') and keyState.three.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 3   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
-          commandQueue[2] = 3
+      if love.keyboard.isDown('3') and keyState.three.pressed == false then
+        commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.right
+        if commandBar.index >= 5 then
+          commandBar.index = 1
         else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          commandBar.index = commandBar.index + 1 -- shift the command question position
         end
-        print("Current Queue: "..commandQueue[2])
         keyState.three.pressed = true
       end
 
 
 
-        -- Checking that I can enabled/disable keys. Using space to disable up
+
+
+
+
+
+
+        -- Using space to debug facing
         if love.keyboard.isDown('space') and keyState.space.pressed == false then
-          keyState.up.enabled = not keyState.up.enabled
+          player.facing = (player.facing + 1)%4
           keyState.space.pressed = true
-          print("Up Enabled: "..(keyState.up.enabled and 'TRUE' or 'FALSE'))
+          player.x = player.x + math.sin(player.facing*math.pi/2)
+          player.y = player.y - math.cos(player.facing*math.pi/2)
+          print("Turn clockwise")
+          print("Player Facing: "..player.facing)
+          print(player.facing%4)
+          print("Player X: "..player.x)
+          print("Player Y: "..player.y)
+        end
+
+
+        if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
+          player.facing = player.facing - 1
+          keyState.alt.pressed = true
+          player.x = player.x - math.cos(player.facing*math.pi/2)
+          player.y = player.y - math.sin(player.facing*math.pi/2)
+          print("Turn counterclockwise")
+          print("Player Facing: "..player.facing)
+          print("Player X: "..player.x)
+          print("Player Y: "..player.y)
         end
 
 
@@ -302,11 +370,21 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-   draw_in_grid(assets.images.player, player.x, player.y)
-   draw_in_grid(assets.images.obstacle, 1, 1)
-   draw_in_grid(assets.images.obstacle, 13, 4)
-   draw_in_grid(assets.images.obstacle, 13, 5)
-   draw_in_grid(assets.images.obstacle, 12, 6)
+
+   draw_in_grid(assets.images.player, player.x, player.y, player.facing)
+   draw_in_grid(assets.images.obstacle, 1, 1, 0)
+   draw_in_grid(assets.images.obstacle, 13, 4, 0)
+   draw_in_grid(assets.images.obstacle, 13, 5, 0)
+   draw_in_grid(assets.images.obstacle, 12, 6, 0)
+
+   -- Draw Command Bar
+   love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[2], 132, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[3], 195, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[4], 258, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[5], 321, 108, 0, 1, 1, 0, 0, 0, 0)
+
+   -- love.graphics.draw(assets.images.player, 300, 400, player.facing)
 
    if worldData.state == enums.game_states.DIALOGUE then
       local prev_r, prev_g, prev_b, prev_a = love.graphics.getColor()
@@ -355,9 +433,16 @@ end
 
 
 -- render an image at a grid position (grid is 0-indexed, origin is top left and increases right and down)
+--[[
 function draw_in_grid(asset, grid_x, grid_y)
    local x, y = grid_coords_to_pixels(grid_x, grid_y)
    love.graphics.draw(asset, x, y)
+end
+]]--
+
+function draw_in_grid(asset, grid_x, grid_y, facing)
+   local x, y = grid_coords_to_pixels(grid_x, grid_y)
+   love.graphics.draw(asset, x, y, math.pi/2*facing)
 end
 
 
@@ -412,9 +497,13 @@ function love.keypressed( key )
    if key == "4" then
       text = "Four  -- pressed!"
    end
-   if key == "5" then
-      text = "Five  -- pressed!"
+   if key == "backspace" then
+      text = "Backspace  -- pressed!"
    end
+   if key == "lalt" then
+      text = "Alt  -- pressed!"
+   end
+
    print(text) --Remove comment to debug keypress
 end
 
@@ -456,9 +545,13 @@ function love.keyreleased( key )
       text = "Four  -- released!"
       keyState.four.pressed = false
    end
-   if key == "5" then
-      text = "Five  -- released!"
-      keyState.five.pressed = false
+   if key == "backspace" then
+      text = "Backspace  -- released!"
+      keyState.backspace.pressed = false
+   end
+   if key == "lalt" then
+      text = "Alt  -- released!"
+      keyState.alt.pressed = false
    end
 --   print(text) --Remove comment to debug keypress
 end
