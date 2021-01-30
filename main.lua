@@ -22,11 +22,11 @@ worldData = {
 commandQueue = { --indices start at 1 in Love2d rather than 0
 0,-- state (0 off, 1 program),
 3,  -- command index initialized to start at the 3rd value
-1, -- 1st command
-2, -- 2nd command
-3, -- 3rd command
-4, -- 4th command
-5,  -- 5th command
+0, -- 1st command
+0, -- 2nd command
+0, -- 3rd command
+0, -- 4th command
+0,  -- 5th command
 }
 
  -- Keeping track of keyboard state. If key is not pressed, state is false.
@@ -156,19 +156,22 @@ function love.update()
        if love.keyboard.isDown('4') and keyState.four.pressed == false then
          keyState.four.pressed = true
          print("Running commands...")
-         for i = 1, 3 do
+         for i = 1, 5 do
            if commandQueue[i+2]==1 then
              player.x = player.x + player.step
+             commandQueue[i+2] = 0
            end
            if commandQueue[i+2]==2 then
              player.y = player.y - player.step
+             commandQueue[i+2] = 0
            end
            if commandQueue[i+2]==3 then
              player.y = player.y + player.step
-          end
+             commandQueue[i+2] = 0
+           end
          end
-
-       end
+         commandQueue[2] = 3
+      end
 
 
       -- Lots of copy pasta here. Probably should build a function that does this.
@@ -177,7 +180,9 @@ function love.update()
         print("First Command: "..commandQueue[3])
         print("Second Command: "..commandQueue[4])
         print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
+        print("Fourth Command: "..commandQueue[6])
+        print("Fifth Command: "..commandQueue[7])
+        if commandQueue[2] >= 7 then
           commandQueue[2] = 3
         else
           commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
@@ -191,7 +196,9 @@ function love.update()
         print("First Command: "..commandQueue[3])
         print("Second Command: "..commandQueue[4])
         print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
+        print("Fourth Command: "..commandQueue[6])
+        print("Fifth Command: "..commandQueue[7])
+        if commandQueue[2] >= 7 then
           commandQueue[2] = 3
         else
           commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
@@ -205,7 +212,9 @@ function love.update()
         print("First Command: "..commandQueue[3])
         print("Second Command: "..commandQueue[4])
         print("Third Command: "..commandQueue[5])
-        if commandQueue[2] >= 5 then
+        print("Fourth Command: "..commandQueue[6])
+        print("Fifth Command: "..commandQueue[7])
+        if commandQueue[2] >= 7 then
           commandQueue[2] = 3
         else
           commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
@@ -243,7 +252,12 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-   print_normal("Global Game Jam let's go!!", 12, 18)
+   print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
+   print_normal("First Command: "..commandQueue[3], 12, 50)
+   print_normal("Second Command: "..commandQueue[4], 12, 70)
+   print_normal("Third Command: "..commandQueue[5], 12, 90)
+   print_normal("Fourth Command: "..commandQueue[6], 12, 110)
+   print_normal("Fifth Command: "..commandQueue[7], 12, 130)
    print_header("GGJ 2021", 400, 300)
    draw_in_grid(assets.images.player, player.x, player.y)
    draw_in_grid(assets.images.obstacle, 1, 1)
