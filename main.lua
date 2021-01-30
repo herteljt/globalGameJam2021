@@ -1,3 +1,5 @@
+require "./dialogue"
+
 -- global data. declared here, initialized in love.load
 assets = {
    images = {
@@ -285,7 +287,7 @@ function love.update(dt)
               and worldData.state == enums.game_states.MAIN_ACTION then
               -- TODO: wrap all of game loop in game state check to make sure we're handling input right
               keyState.p.pressed = true
-              display_dialogue(test_dialogue_chunk)
+              display_dialogue(dialogue.introduction)
            end
            if love.keyboard.isDown('p')
               and worldData.state == enums.game_states.DIALOGUE
@@ -462,28 +464,9 @@ function love.keyreleased( key )
 end
 
 
-test_dialogue_chunk = {
-   {
-      name = "First Speaker",
-      avatar = 'fake_avatar',
-      text = "Hey buddy, I just wanted to say hi. This text is really long so that we can see text wrapping in action. Let's get those lines in here, eh?",
-   },
-   {
-      name = "Second Speaker",
-      avatar = 'fake_avatar',
-      text = "Hi there! What's wrong?",
-   },
-   {
-      name = "First Speaker",
-      avatar = 'fake_avatar',
-      text = "Oh, nothing! Sorry, just a little sleepy :) :)",
-   }
-}
-
-
 function display_dialogue(dialogue_chunk)
    worldData.state = enums.game_states.DIALOGUE
-   worldData.current_dialogue.full_chunk = test_dialogue_chunk
+   worldData.current_dialogue.full_chunk = dialogue_chunk
    worldData.current_dialogue.chunk_index = 0
    local size = 0
    for i,x in ipairs(dialogue_chunk) do
