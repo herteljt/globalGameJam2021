@@ -265,11 +265,14 @@ function love.update()
 
 
 
-        -- Checking that I can enabled/disable keys. Using space to disable up
+        -- Using space to debug facing
         if love.keyboard.isDown('space') and keyState.space.pressed == false then
-          keyState.up.enabled = not keyState.up.enabled
+          player.facing = player.facing + 1.57
           keyState.space.pressed = true
-          print("Up Enabled: "..(keyState.up.enabled and 'TRUE' or 'FALSE'))
+          print("Player Facing: "..player.facing)
+          print("Player X: "..player.x)
+          print("Player Y: "..player.y)
+
         end
 
 
@@ -293,11 +296,11 @@ end
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
    print_header("GGJ 2021", 400, 300)
-   draw_in_grid(assets.images.player, player.x, player.y)
-   draw_in_grid(assets.images.obstacle, 1, 1)
-   draw_in_grid(assets.images.obstacle, 13, 4)
-   draw_in_grid(assets.images.obstacle, 13, 5)
-   draw_in_grid(assets.images.obstacle, 12, 6)
+   draw_in_grid(assets.images.player, player.x, player.y, player.facing)
+   draw_in_grid(assets.images.obstacle, 1, 1, 0)
+   draw_in_grid(assets.images.obstacle, 13, 4, 0)
+   draw_in_grid(assets.images.obstacle, 13, 5, 0)
+   draw_in_grid(assets.images.obstacle, 12, 6, 0)
 
    -- Draw Command Bar
    love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
@@ -306,6 +309,7 @@ function love.draw()
    love.graphics.draw(commandBar.image[4], 258, 108, 0, 1, 1, 0, 0, 0, 0)
    love.graphics.draw(commandBar.image[5], 321, 108, 0, 1, 1, 0, 0, 0, 0)
 
+  -- love.graphics.draw(assets.images.player, 300, 400, player.facing)
 
 end
 
@@ -321,9 +325,16 @@ end
 
 
 -- render an image at a grid position (grid is 0-indexed, origin is top left and increases right and down)
+--[[
 function draw_in_grid(asset, grid_x, grid_y)
    local x, y = grid_coords_to_pixels(grid_x, grid_y)
    love.graphics.draw(asset, x, y)
+end
+]]--
+
+function draw_in_grid(asset, grid_x, grid_y, rotation)
+   local x, y = grid_coords_to_pixels(grid_x, grid_y)
+   love.graphics.draw(asset, x, y, rotation)
 end
 
 
