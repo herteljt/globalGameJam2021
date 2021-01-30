@@ -37,6 +37,10 @@ keyState = {
     pressed = false,
     enabled = true
   },
+  space = {
+    pressed = false,
+    enabled = true
+  },
 }
 
 -- initialized at game launch
@@ -111,16 +115,23 @@ function love.update()
 
 
 
-        -- Checking that I can enabled/disable keys. This is buggy because of the number of times love updates
-        if love.keyboard.isDown('space') then
-         if keyState.up.enabled == true then
-           keyState.up.enabled = false
-           print("Up disabled")
-         else
-           keyState.up.enabled = true
-           print("Up enabled")
-         end
-       end
+        -- Checking that I can enabled/disable keys. Using space to disable up
+        if love.keyboard.isDown('space') and keyState.space.pressed == false then
+          keyState.up.enabled = not keyState.up.enabled
+          keyState.space.pressed = true
+          print("Up Enabled: "..(keyState.up.enabled and 'TRUE' or 'FALSE'))
+--[[
+              if keyState.up.enabled == true then
+                keyState.up.enabled = false
+                keyState.space.pressed = true
+                print("DISABLED")
+              else
+                keyState.up.enabled = true
+                keyState.space.pressed = true
+                print("UP ON")
+              end
+              ]]--
+        end
 
 
        -- end program
@@ -166,6 +177,7 @@ function draw_in_grid(asset, grid_x, grid_y)
    love.graphics.draw(asset, x, y)
 end
 
+
 -- convert play area grid coords to pixel space
 -- hard-coding 1024x768 play window, since this is a game jam and there are no rules
 function grid_coords_to_pixels(grid_x, grid_y)
@@ -192,35 +204,44 @@ end
 --Functions to track key pressing
 function love.keypressed( key )
    if key == "d" or key =="right" then
-      text = "Right has been pressed!"
+      text = "Right  -- pressed!"
    end
    if key == "a" or key =="left" then
-      text = "Left has been pressed!"
+      text = "Left  -- pressed!"
    end
    if key == "w" or key =="up" then
-      text = "Up has been pressed!"
+      text = "Up  -- pressed!"
    end
    if key == "s" or key =="down" then
-      text = "Down has been pressed!"
+      text = "Down  -- pressed!"
    end
+   if key == "space" then
+      text = "Space  -- pressed!"
+   end
+   --print(text) --Remove comment to debug keypress
 end
 
 
 function love.keyreleased( key )
    if key == "d" or key =="right" then
-      text = "Right has been released!"
+      text = "Right  -- released!"
       keyState.right.pressed = false
    end
    if key == "a" or key =="left" then
-      text = "Left has been released!"
+      text = "Left  -- released!"
       keyState.left.pressed = false
    end
    if key == "w" or key =="up" then
-      text = "Up has been released!"
+      text = "Up  -- released!"
       keyState.up.pressed = false
    end
    if key == "s" or key =="down" then
-      text = "Down has been released!"
+      text = "Down  -- released!"
       keyState.down.pressed = false
    end
+   if key == "space" then
+      text = "Space  -- released!"
+      keyState.space.pressed = false
+   end
+   --print(text) --Remove comment to debug keypress
 end
