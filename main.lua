@@ -220,7 +220,7 @@ function love.keypressed( key )
    end
    --print(text) --Remove comment to debug keypress
 end
-
+ 
 
 function love.keyreleased( key )
    if key == "d" or key =="right" then
