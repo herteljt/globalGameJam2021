@@ -7,6 +7,11 @@ dialogue.introduction = {
       text = "Hi there! This is a Global Game Jam game! We're glad you wanted to play it :)"
    },
    {
+      name = "Casey",
+      avatar = "fake_avatar",
+      text = "Wait, I had more to say!"
+   },
+   {
       name = "Josh",
       avatar = "fake_avatar",
       text = "Yeah, that's super cool!"
