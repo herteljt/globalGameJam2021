@@ -98,7 +98,6 @@ score = nil,
 step = nil,
 facing = nil,
 
-
 }
 
 -- initialized at game launch
@@ -271,22 +270,23 @@ function love.update()
 
         -- Using space to debug facing
         if love.keyboard.isDown('space') and keyState.space.pressed == false then
-          player.facing = player.facing + math.pi/2
+          player.facing = (player.facing + 1)%4
           keyState.space.pressed = true
-          player.x = player.x + math.sin(player.facing)
-          player.y = player.y - math.cos(player.facing)
-
+          player.x = player.x + math.sin(player.facing*math.pi/2)
+          player.y = player.y - math.cos(player.facing*math.pi/2)
           print("Turn clockwise")
           print("Player Facing: "..player.facing)
+          print(player.facing%4)
           print("Player X: "..player.x)
           print("Player Y: "..player.y)
         end
 
+
         if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
-          player.facing = player.facing - math.pi/2
+          player.facing = player.facing - 1
           keyState.alt.pressed = true
-          player.x = player.x - math.cos(player.facing)
-          player.y = player.y - math.sin(player.facing)
+          player.x = player.x - math.cos(player.facing*math.pi/2)
+          player.y = player.y - math.sin(player.facing*math.pi/2)
           print("Turn counterclockwise")
           print("Player Facing: "..player.facing)
           print("Player X: "..player.x)
@@ -352,7 +352,7 @@ end
 
 function draw_in_grid(asset, grid_x, grid_y, facing)
    local x, y = grid_coords_to_pixels(grid_x, grid_y)
-   love.graphics.draw(asset, x, y, facing)
+   love.graphics.draw(asset, x, y, math.pi/2*facing)
 end
 
 
