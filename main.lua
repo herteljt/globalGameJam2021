@@ -33,28 +33,24 @@ commandQueue = { --indices start at 1 in Love2d rather than 0
 1,  -- command index initialized to start at the 1st value
 }
 
--- Storing both the commands and the images for display
-commandBar = { --indices start at 1 in Love2d rather than 0
-index = 1, --keeping track of which command is selected
-command = {
-0, -- 1st command
-0, -- 2nd command
-0, -- 3rd command
-0, -- 4th command
-0,  -- 5th command
-},
-image = {
-  love.graphics.newImage("graphics/blank_placeholder.png"),
-  love.graphics.newImage("graphics/blank_placeholder.png"),
-  love.graphics.newImage("graphics/blank_placeholder.png"),
-  love.graphics.newImage("graphics/blank_placeholder.png"),
-  love.graphics.newImage("graphics/blank_placeholder.png"),
 
-},
+-- Command Bar variables. Storing both the commands and the images for display
+commandBar = { --indices start at 1 in Love2d rather than 0
+
+      index = 1, --keeping track of which command is selected
+
+      command = {
+        0, -- 1st command
+        0, -- 2nd command
+        0, -- 3rd command
+        0, -- 4th command
+        0,  -- 5th command
+        },
+
+        image = {},
 }
 
-
- -- Keeping track of keyboard state. If key is not pressed, state is false.
+-- Keeping track of keyboard state. If key is not pressed, state is false.
 keyState = {
   up = {
     pressed = false,
@@ -115,6 +111,13 @@ function love.load()
     player.step = player.width
     player.speed = 1
     player.score = 0
+
+    -- command bar
+    commandBar.image[1]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[2]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[3]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[4]= love.graphics.newImage("graphics/blank_placeholder.png")
+    commandBar.image[5]= love.graphics.newImage("graphics/blank_placeholder.png")
 
 
    -- images
@@ -236,7 +239,7 @@ function love.update()
       end
 
       if love.keyboard.isDown('3') and keyState.three.pressed == false then
-        commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
+        commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
         commandBar.image[commandBar.index] = assets.images.right
         if commandBar.index >= 5 then
           commandBar.index = 1
