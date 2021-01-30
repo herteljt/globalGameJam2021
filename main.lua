@@ -82,6 +82,10 @@ keyState = {
     pressed = false,
     enabled = true
   },
+  alt = {
+    pressed = false,
+    enabled = true
+  },
 }
 
 player = {
@@ -267,12 +271,26 @@ function love.update()
 
         -- Using space to debug facing
         if love.keyboard.isDown('space') and keyState.space.pressed == false then
-          player.facing = player.facing + 1.57
+          player.facing = player.facing + math.pi/2
           keyState.space.pressed = true
+          player.x = player.x + math.sin(player.facing)
+          player.y = player.y - math.cos(player.facing)
+
+          print("Turn clockwise")
           print("Player Facing: "..player.facing)
           print("Player X: "..player.x)
           print("Player Y: "..player.y)
+        end
 
+        if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
+          player.facing = player.facing - math.pi/2
+          keyState.alt.pressed = true
+          player.x = player.x - math.cos(player.facing)
+          player.y = player.y - math.sin(player.facing)
+          print("Turn counterclockwise")
+          print("Player Facing: "..player.facing)
+          print("Player X: "..player.x)
+          print("Player Y: "..player.y)
         end
 
 
@@ -332,9 +350,9 @@ function draw_in_grid(asset, grid_x, grid_y)
 end
 ]]--
 
-function draw_in_grid(asset, grid_x, grid_y, rotation)
+function draw_in_grid(asset, grid_x, grid_y, facing)
    local x, y = grid_coords_to_pixels(grid_x, grid_y)
-   love.graphics.draw(asset, x, y, rotation)
+   love.graphics.draw(asset, x, y, facing)
 end
 
 
@@ -392,6 +410,10 @@ function love.keypressed( key )
    if key == "backspace" then
       text = "Backspace  -- pressed!"
    end
+   if key == "lalt" then
+      text = "Alt  -- pressed!"
+   end
+
    print(text) --Remove comment to debug keypress
 end
 
@@ -436,6 +458,10 @@ function love.keyreleased( key )
    if key == "backspace" then
       text = "Backspace  -- released!"
       keyState.backspace.pressed = false
+   end
+   if key == "lalt" then
+      text = "Alt  -- released!"
+      keyState.alt.pressed = false
    end
 --   print(text) --Remove comment to debug keypress
 end
