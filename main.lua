@@ -20,13 +20,13 @@ worldData = {
 }
 
 commandQueue = { --indices start at 1 in Love2d rather than 0
-0,-- state (0 off, 1 program),
-3,  -- command index initialized to start at the 3rd value
 0, -- 1st command
 0, -- 2nd command
 0, -- 3rd command
 0, -- 4th command
 0,  -- 5th command
+0,-- programming state (0 off, 1 program),
+1,  -- command index initialized to start at the 1st value
 }
 
  -- Keeping track of keyboard state. If key is not pressed, state is false.
@@ -149,7 +149,7 @@ function love.update()
        if love.keyboard.isDown('5') and keyState.five.pressed == false then
          keyState.five.pressed = true
          print("Enter first command: (1-Forward, 2-Left, 3-Right)")
-         commandQueue[1] = true
+         commandQueue[6] = true
        end
 
        -- Enable command input
@@ -157,69 +157,69 @@ function love.update()
          keyState.four.pressed = true
          print("Running commands...")
          for i = 1, 5 do
-           if commandQueue[i+2]==1 then
+           if commandQueue[i]==1 then
              player.x = player.x + player.step
-             commandQueue[i+2] = 0
+             commandQueue[i] = 0
            end
-           if commandQueue[i+2]==2 then
+           if commandQueue[i]==2 then
              player.y = player.y - player.step
-             commandQueue[i+2] = 0
+             commandQueue[i] = 0
            end
-           if commandQueue[i+2]==3 then
+           if commandQueue[i]==3 then
              player.y = player.y + player.step
-             commandQueue[i+2] = 0
+             commandQueue[i] = 0
            end
          end
-         commandQueue[2] = 3
+         commandQueue[7] = 3
       end
 
 
       -- Lots of copy pasta here. Probably should build a function that does this.
-      if love.keyboard.isDown('1') and keyState.one.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 1   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        print("Fourth Command: "..commandQueue[6])
-        print("Fifth Command: "..commandQueue[7])
-        if commandQueue[2] >= 7 then
-          commandQueue[2] = 3
+      if love.keyboard.isDown('1') and keyState.one.pressed == false and commandQueue[6] == true then
+        commandQueue[commandQueue[7]] = 1   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[1])
+        print("Second Command: "..commandQueue[2])
+        print("Third Command: "..commandQueue[3])
+        print("Fourth Command: "..commandQueue[4])
+        print("Fifth Command: "..commandQueue[5])
+        if commandQueue[7] >= 7 then
+          commandQueue[7] = 1
         else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
         end
-        print("Current Queue: "..commandQueue[2])
+        print("Current Queue: "..commandQueue[7])
         keyState.one.pressed = true
       end
 
-      if love.keyboard.isDown('2') and keyState.two.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 2   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        print("Fourth Command: "..commandQueue[6])
-        print("Fifth Command: "..commandQueue[7])
-        if commandQueue[2] >= 7 then
-          commandQueue[2] = 3
+      if love.keyboard.isDown('2') and keyState.two.pressed == false and commandQueue[6] == true then
+        commandQueue[commandQueue[7]] = 2   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[1])
+        print("Second Command: "..commandQueue[2])
+        print("Third Command: "..commandQueue[3])
+        print("Fourth Command: "..commandQueue[4])
+        print("Fifth Command: "..commandQueue[5])
+        if commandQueue[7] >= 7 then
+          commandQueue[7] = 1
         else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
         end
-        print("Current Queue: "..commandQueue[2])
+        print("Current Queue: "..commandQueue[7])
         keyState.two.pressed = true
       end
 
-      if love.keyboard.isDown('3') and keyState.three.pressed == false and commandQueue[1] == true then
-        commandQueue[commandQueue[2]] = 3   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[3])
-        print("Second Command: "..commandQueue[4])
-        print("Third Command: "..commandQueue[5])
-        print("Fourth Command: "..commandQueue[6])
-        print("Fifth Command: "..commandQueue[7])
-        if commandQueue[2] >= 7 then
-          commandQueue[2] = 3
+      if love.keyboard.isDown('3') and keyState.three.pressed == false and commandQueue[6] == true then
+        commandQueue[commandQueue[7]] = 3   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[1])
+        print("Second Command: "..commandQueue[2])
+        print("Third Command: "..commandQueue[3])
+        print("Fourth Command: "..commandQueue[4])
+        print("Fifth Command: "..commandQueue[5])
+        if commandQueue[7] >= 7 then
+          commandQueue[7] = 1
         else
-          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
         end
-        print("Current Queue: "..commandQueue[2])
+        print("Current Queue: "..commandQueue[7])
         keyState.three.pressed = true
       end
 
