@@ -243,8 +243,6 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-   print_normal("Global Game Jam let's go!!", 12, 18)
-   print_header("GGJ 2021", 400, 300)
    draw_in_grid(assets.images.player, player.x, player.y)
    draw_in_grid(assets.images.obstacle, 1, 1)
    draw_in_grid(assets.images.obstacle, 13, 4)
