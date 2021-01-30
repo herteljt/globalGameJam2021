@@ -11,12 +11,22 @@ assets = {
    }
 }
 
-world_data = {
+worldData = {
    grid = {
       width = 16,
       height = 9,
       border = 0,
    },
+}
+
+commandQueue = { --indices start at 1 in Love2d rather than 0
+0,-- state (0 off, 1 program),
+3,  -- command index initialized to start at the 3rd value
+1, -- 1st command
+2, -- 2nd command
+3, -- 3rd command
+4, -- 4th command
+5,  -- 5th command
 }
 
  -- Keeping track of keyboard state. If key is not pressed, state is false.
@@ -67,6 +77,8 @@ keyState = {
 function love.load()
    print("Loading game...")
 
+   waiting = true
+   waitingTimer = 10
 
   -- player
   player = {}
@@ -117,21 +129,90 @@ function love.update()
 
 
      -- Prevent player from going offscreen
-       if player.x < world_data.grid.border then
-         player.x = world_data.grid.border
+       if player.x < worldData.grid.border then
+         player.x = worldData.grid.border
        end
 
-       if player.x > world_data.grid.width - player.width - world_data.grid.border then
-         player.x = world_data.grid.width - player.width - world_data.grid.border
+       if player.x > worldData.grid.width - player.width - worldData.grid.border then
+         player.x = worldData.grid.width - player.width - worldData.grid.border
        end
 
-       if player.y < world_data.grid.border then
-         player.y = world_data.grid.border
+       if player.y < worldData.grid.border then
+         player.y = worldData.grid.border
        end
 
-       if player.y > world_data.grid.height - player.height - world_data.grid.border then
-         player.y = world_data.grid.height - player.height - world_data.grid.border
+       if player.y > worldData.grid.height - player.height - worldData.grid.border then
+         player.y = worldData.grid.height - player.height - worldData.grid.border
        end
+
+       -- Enable command input
+       if love.keyboard.isDown('5') and keyState.five.pressed == false then
+         keyState.five.pressed = true
+         print("Enter first command: (1-Forward, 2-Left, 3-Right)")
+         commandQueue[1] = true
+       end
+
+       -- Enable command input
+       if love.keyboard.isDown('4') and keyState.four.pressed == false then
+         keyState.four.pressed = true
+         print("Running commands...")
+         for i = 1, 3 do
+           if commandQueue[i+2]==1 then
+             player.x = player.x + player.step
+           end
+           if commandQueue[i+2]==2 then
+             player.y = player.y - player.step
+           end
+           if commandQueue[i+2]==3 then
+             player.y = player.y + player.step
+          end
+         end
+
+       end
+
+
+      -- Lots of copy pasta here. Probably should build a function that does this.
+      if love.keyboard.isDown('1') and keyState.one.pressed == false and commandQueue[1] == true then
+        commandQueue[commandQueue[2]] = 1   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[3])
+        print("Second Command: "..commandQueue[4])
+        print("Third Command: "..commandQueue[5])
+        if commandQueue[2] >= 5 then
+          commandQueue[2] = 3
+        else
+          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+        end
+        print("Current Queue: "..commandQueue[2])
+        keyState.one.pressed = true
+      end
+
+      if love.keyboard.isDown('2') and keyState.two.pressed == false and commandQueue[1] == true then
+        commandQueue[commandQueue[2]] = 2   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[3])
+        print("Second Command: "..commandQueue[4])
+        print("Third Command: "..commandQueue[5])
+        if commandQueue[2] >= 5 then
+          commandQueue[2] = 3
+        else
+          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+        end
+        print("Current Queue: "..commandQueue[2])
+        keyState.two.pressed = true
+      end
+
+      if love.keyboard.isDown('3') and keyState.three.pressed == false and commandQueue[1] == true then
+        commandQueue[commandQueue[2]] = 3   -- Set the value of the current command queue position to 1
+        print("First Command: "..commandQueue[3])
+        print("Second Command: "..commandQueue[4])
+        print("Third Command: "..commandQueue[5])
+        if commandQueue[2] >= 5 then
+          commandQueue[2] = 3
+        else
+          commandQueue[2] = commandQueue[2] + 1 -- shift the command question position
+        end
+        print("Current Queue: "..commandQueue[2])
+        keyState.three.pressed = true
+      end
 
 
 
@@ -140,17 +221,6 @@ function love.update()
           keyState.up.enabled = not keyState.up.enabled
           keyState.space.pressed = true
           print("Up Enabled: "..(keyState.up.enabled and 'TRUE' or 'FALSE'))
---[[
-              if keyState.up.enabled == true then
-                keyState.up.enabled = false
-                keyState.space.pressed = true
-                print("DISABLED")
-              else
-                keyState.up.enabled = true
-                keyState.space.pressed = true
-                print("UP ON")
-              end
-              ]]--
         end
 
 
@@ -163,6 +233,8 @@ function love.update()
            if love.keyboard.isDown('r') then
               love.event.quit("restart")
            end
+
+
 
 
 end
@@ -201,9 +273,9 @@ end
 -- convert play area grid coords to pixel space
 -- hard-coding 1024x768 play window, since this is a game jam and there are no rules
 function grid_coords_to_pixels(grid_x, grid_y)
-   if (grid_x > world_data.grid.width - 1
+   if (grid_x > worldData.grid.width - 1
        or grid_x < 0
-       or grid_y > world_data.grid.height - 1
+       or grid_y > worldData.grid.height - 1
        or grid_y < 0) then
       print("ERROR: tried to compute grid coords out of bounds")
       return -1, -1
@@ -211,15 +283,14 @@ function grid_coords_to_pixels(grid_x, grid_y)
 
    local top_of_grid = 3 * 64
    local left_of_grid = 0
-   local right_of_grid = world_data.grid.width * 64
-   local bottom_of_grid = world_data.grid.height * 64
+   local right_of_grid = worldData.grid.width * 64
+   local bottom_of_grid = worldData.grid.height * 64
 
    local pixels_x = grid_x * 64 + left_of_grid
    local pixels_y = grid_y * 64 + top_of_grid
 
    return pixels_x, pixels_y
 end
-
 
 --Functions to track key pressing
 function love.keypressed( key )
@@ -298,5 +369,5 @@ function love.keyreleased( key )
       text = "Five  -- released!"
       keyState.five.pressed = false
    end
-   print(text) --Remove comment to debug keypress
+--   print(text) --Remove comment to debug keypress
 end
