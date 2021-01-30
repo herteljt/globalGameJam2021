@@ -4,6 +4,10 @@ assets = {
       background = nil,
       player = nil,
       obstacle = nil,
+      forward = nil,
+      left = nil,
+      right = nil,
+      blank = nil,
    },
    fonts = {
       regular = nil,
@@ -96,6 +100,10 @@ function love.load()
    assets.images.background = love.graphics.newImage("graphics/background.png")
    assets.images.player = love.graphics.newImage("graphics/spaceship_placeholder.png")
    assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
+   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
+   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
+   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
+   assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
 
    -- fonts
    assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -170,7 +178,7 @@ function love.update()
              commandQueue[i] = 0
            end
          end
-         commandQueue[7] = 3
+         commandQueue[7] = 1
       end
 
 
@@ -267,6 +275,15 @@ function love.draw()
    draw_in_grid(assets.images.obstacle, 13, 4)
    draw_in_grid(assets.images.obstacle, 13, 5)
    draw_in_grid(assets.images.obstacle, 12, 6)
+
+   -- Draw Command Queue
+   love.graphics.draw(assets.images.forward, 69, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(assets.images.left, 132, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(assets.images.right, 195, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(assets.images.blank, 258, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(assets.images.left, 321, 108, 0, 1, 1, 0, 0, 0, 0)
+
+
 end
 
 
