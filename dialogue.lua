@@ -10,5 +10,10 @@ dialogue.introduction = {
       name = "Josh",
       avatar = "fake_avatar",
       text = "Yeah, that's super cool!"
+   },
+   {
+      name = "Dave",
+      avatar = "fake_avatar",
+      text = "I wrote this text! It was definitely me."
    }
 }
