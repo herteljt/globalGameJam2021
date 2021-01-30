@@ -33,6 +33,27 @@ commandQueue = { --indices start at 1 in Love2d rather than 0
 1,  -- command index initialized to start at the 1st value
 }
 
+-- Storing both the commands and the images for display
+commandBar = { --indices start at 1 in Love2d rather than 0
+index = 1, --keeping track of which command is selected
+command = {
+0, -- 1st command
+0, -- 2nd command
+0, -- 3rd command
+0, -- 4th command
+0,  -- 5th command
+},
+image = {
+  love.graphics.newImage("graphics/blank_placeholder.png"),
+  love.graphics.newImage("graphics/blank_placeholder.png"),
+  love.graphics.newImage("graphics/blank_placeholder.png"),
+  love.graphics.newImage("graphics/blank_placeholder.png"),
+  love.graphics.newImage("graphics/blank_placeholder.png"),
+
+},
+}
+
+
  -- Keeping track of keyboard state. If key is not pressed, state is false.
 keyState = {
   up = {
@@ -105,6 +126,8 @@ function love.load()
    assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
    assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
 
+
+
    -- fonts
    assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
    assets.fonts.header = love.graphics.newFont("fonts/pixeboy.ttf", 56, "none")
@@ -161,24 +184,28 @@ function love.update()
        end
 
        -- Enable command input
-       if love.keyboard.isDown('4') and keyState.four.pressed == false then
-         keyState.four.pressed = true
-         print("Running commands...")
-         for i = 1, 5 do
-           if commandQueue[i]==1 then
-             player.x = player.x + player.step
-             commandQueue[i] = 0
-           end
-           if commandQueue[i]==2 then
-             player.y = player.y - player.step
-             commandQueue[i] = 0
-           end
-           if commandQueue[i]==3 then
-             player.y = player.y + player.step
-             commandQueue[i] = 0
-           end
-         end
-         commandQueue[7] = 1
+
+      if love.keyboard.isDown('4') and keyState.four.pressed == false then
+        keyState.four.pressed = true
+        print("Running commands...")
+        for i = 1, 5 do
+          if commandBar.command[i]==1 then
+            player.x = player.x + player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
+          end
+          if commandBar.command[i]==2 then
+            player.y = player.y - player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
+          end
+          if commandBar.command[i]==3 then
+            player.y = player.y + player.step
+            commandBar.command[i] = 0
+            commandBar.image[i] = assets.images.blank
+          end
+        end
+        commandBar.index = 1
       end
 
 
@@ -232,6 +259,47 @@ function love.update()
       end
 
 
+      -- New Commnad Queue Code
+      if love.keyboard.isDown('1') and keyState.one.pressed == false then
+        commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.forward
+        if commandBar.index >= 5 then
+          commandBar.index = 1
+        else
+          commandBar.index = commandBar.index + 1 -- shift the command question position
+        end
+        keyState.one.pressed = true
+      end
+
+      if love.keyboard.isDown('2') and keyState.two.pressed == false then
+        commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.left
+        if commandBar.index >= 5 then
+          commandBar.index = 1
+        else
+          commandBar.index = commandBar.index + 1 -- shift the command question position
+        end
+        keyState.two.pressed = true
+      end
+
+      if love.keyboard.isDown('3') and keyState.three.pressed == false then
+        commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
+        commandBar.image[commandBar.index] = assets.images.right
+        if commandBar.index >= 5 then
+          commandBar.index = 1
+        else
+          commandBar.index = commandBar.index + 1 -- shift the command question position
+        end
+        keyState.three.pressed = true
+      end
+
+
+
+
+
+
+
+
 
         -- Checking that I can enabled/disable keys. Using space to disable up
         if love.keyboard.isDown('space') and keyState.space.pressed == false then
@@ -260,15 +328,6 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-  --[[ -- Text I used to debug queue. Can be removed.
-
-  print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
-   print_normal("First Command: "..commandQueue[3], 12, 50)
-   print_normal("Second Command: "..commandQueue[4], 12, 70)
-   print_normal("Third Command: "..commandQueue[5], 12, 90)
-   print_normal("Fourth Command: "..commandQueue[6], 12, 110)
-   print_normal("Fifth Command: "..commandQueue[7], 12, 130)
-   ]]--
    print_header("GGJ 2021", 400, 300)
    draw_in_grid(assets.images.player, player.x, player.y)
    draw_in_grid(assets.images.obstacle, 1, 1)
@@ -276,12 +335,12 @@ function love.draw()
    draw_in_grid(assets.images.obstacle, 13, 5)
    draw_in_grid(assets.images.obstacle, 12, 6)
 
-   -- Draw Command Queue
-   love.graphics.draw(assets.images.forward, 69, 108, 0, 1, 1, 0, 0, 0, 0)
-   love.graphics.draw(assets.images.left, 132, 108, 0, 1, 1, 0, 0, 0, 0)
-   love.graphics.draw(assets.images.right, 195, 108, 0, 1, 1, 0, 0, 0, 0)
-   love.graphics.draw(assets.images.blank, 258, 108, 0, 1, 1, 0, 0, 0, 0)
-   love.graphics.draw(assets.images.left, 321, 108, 0, 1, 1, 0, 0, 0, 0)
+   -- Draw Command Bar
+   love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[2], 132, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[3], 195, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[4], 258, 108, 0, 1, 1, 0, 0, 0, 0)
+   love.graphics.draw(commandBar.image[5], 321, 108, 0, 1, 1, 0, 0, 0, 0)
 
 
 end
