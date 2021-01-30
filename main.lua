@@ -4,19 +4,36 @@ assets = {
       background = nil,
       player = nil,
       obstacle = nil,
+      fake_avatar = nil,
    },
    fonts = {
       regular = nil,
       header = nil,
+      dialogue = nil,
+   }
+}
+
+enums = {
+   game_states = {
+      MAIN_ACTION = 0,
+      DIALOGUE = 1,
    }
 }
 
 worldData = {
+   state = enums.game_states.MAIN_ACTION,
    grid = {
       width = 16,
       height = 9,
       border = 0,
    },
+   current_dialogue = {
+      name = nil,
+      avatar = nil,
+      text = nil,
+      time_since_started_printing = 0,
+      len_to_print = 0,
+   }
 }
 
 commandQueue = { --indices start at 1 in Love2d rather than 0
@@ -71,6 +88,10 @@ keyState = {
     pressed = false,
     enabled = true
   },
+  p = {
+     pressed = false,
+     enabled = true
+  }
 }
 
 -- initialized at game launch
@@ -96,10 +117,12 @@ function love.load()
    assets.images.background = love.graphics.newImage("graphics/background.png")
    assets.images.player = love.graphics.newImage("graphics/spaceship_placeholder.png")
    assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
+   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
 
    -- fonts
    assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
    assets.fonts.header = love.graphics.newFont("fonts/pixeboy.ttf", 56, "none")
+   assets.fonts.dialogue = love.graphics.newFont("fonts/pixeboy.ttf", 22, "none")
 
    -- sounds
 
@@ -108,9 +131,7 @@ end
 
 
 -- runs continuously. logic and game state updates go here
-function love.update()
-   -- print("spamming the console log XD")
-
+function love.update(dt)
    -- Player movement
      if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
        player.x = player.x + player.step
@@ -234,8 +255,31 @@ function love.update()
               love.event.quit("restart")
            end
 
+           if not love.keyboard.isDown('p') then
+              keyState.p.pressed = false
+            end
 
+           if worldData.state == enums.game_states.DIALOGUE then
+              local full_len = string.len(worldData.current_dialogue.text)
+              local chars_per_second = 45
+              local len_to_print = chars_per_second * worldData.current_dialogue.time_since_started_printing
+              worldData.current_dialogue.len_to_print = len_to_print
+              worldData.current_dialogue.time_since_started_printing = dt + worldData.current_dialogue.time_since_started_printing
+           end
 
+           if love.keyboard.isDown('p')
+              and not keyState.p.pressed
+              and worldData.state == enums.game_states.MAIN_ACTION then
+              -- TODO: wrap all of game loop in game state check to make sure we're handling input right
+              keyState.p.pressed = true
+              display_dialogue(test_dialogue_chunk)
+           end
+           if love.keyboard.isDown('p')
+              and worldData.state == enums.game_states.DIALOGUE
+              and not keyState.p.pressed then
+              keyState.p.pressed = true
+              advance_dialogue()
+           end
 
 end
 
@@ -248,6 +292,25 @@ function love.draw()
    draw_in_grid(assets.images.obstacle, 13, 4)
    draw_in_grid(assets.images.obstacle, 13, 5)
    draw_in_grid(assets.images.obstacle, 12, 6)
+
+   if worldData.state == enums.game_states.DIALOGUE then
+      local prev_r, prev_g, prev_b, prev_a = love.graphics.getColor()
+
+      -- overlay to dim the play grid while dialogue is happening
+      love.graphics.setColor(0, 0, 0, 0.75)
+      love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
+      -- render currently set avatar, name, and text
+      if worldData.current_dialogue then
+        love.graphics.setColor(0, 0.8, 0, 1)
+        love.graphics.draw(assets.images[worldData.current_dialogue.avatar], 537, 33)
+        print_name(worldData.current_dialogue.name)
+        local substr = string.sub(worldData.current_dialogue.text, 1, worldData.current_dialogue.len_to_print)
+        print_dialogue_text(substr)
+        print_dialogue_continue_caret()
+      end
+
+      love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
+   end
 end
 
 
@@ -258,6 +321,19 @@ end
 
 function print_header(text, x_pos, y_pos)
    love.graphics.print(text, assets.fonts.header, x_pos, y_pos, 0, 1, 1)
+end
+
+function print_name(name)
+   love.graphics.print(name, assets.fonts.regular, 680, 33)
+end
+
+function print_dialogue_text(text)
+   love.graphics.printf(text, assets.fonts.dialogue, 680, 65, 320)
+end
+
+function print_dialogue_continue_caret()
+   -- TODO: make this blink
+   --love.graphics.print("v", assets.fonts.regular, 700, 700)
 end
 
 
@@ -368,4 +444,46 @@ function love.keyreleased( key )
       keyState.five.pressed = false
    end
 --   print(text) --Remove comment to debug keypress
+end
+
+
+test_dialogue_chunk = {
+   {
+      name = "First Speaker",
+      avatar = 'fake_avatar',
+      text = "Hey buddy, I just wanted to say hi. This text is really long so that we can see text wrapping in action. Let's get those lines in here, eh?",
+   },
+   {
+      name = "Second Speaker",
+      avatar = 'fake_avatar',
+      text = "Hi there! What's wrong?",
+   },
+   {
+      name = "First Speaker",
+      avatar = 'fake_avatar',
+      text = "Oh, nothing! Sorry, just a little sleepy :) :)",
+   }
+}
+
+
+function display_dialogue(dialogue_chunk)
+   worldData.state = enums.game_states.DIALOGUE
+   worldData.current_dialogue.name = test_dialogue_chunk[1].name
+   worldData.current_dialogue.text = test_dialogue_chunk[1].text
+   worldData.current_dialogue.avatar = test_dialogue_chunk[1].avatar
+
+   -- game state has to go into dialogue mode (where it blocks other game state advancements and inputs)
+   -- avatar of first speaker animates in
+   -- also show their name at the top of the text box
+   -- text animates onto screen
+   -- text is broken up into three-line chunks. we should be able to just hard-code how many chars that is.
+   -- if there's more text in this speaker's bit, show a caret to advance
+   -- if this speaker is done, show a dot to advance
+   -- enter key will advance forward either speaker or text bit, OR if we're done, exit dialogue mode and clear the window
+
+end
+
+function advance_dialogue()
+   print("we're in dialogue mode and you hit 'p', so advancing the text one screen")
+   worldData.state = enums.game_states.MAIN_ACTION
 end
