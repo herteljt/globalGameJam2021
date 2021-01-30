@@ -1,9 +1,12 @@
+require "./dialogue"
+
 -- global data. declared here, initialized in love.load
 assets = {
    images = {
       background = nil,
       player = nil,
       obstacle = nil,
+      fake_avatar = nil,
       forward = nil,
       left = nil,
       right = nil,
@@ -12,15 +15,35 @@ assets = {
    fonts = {
       regular = nil,
       header = nil,
+      dialogue = nil,
+   }
+}
+
+enums = {
+   game_states = {
+      MAIN_ACTION = 0,
+      DIALOGUE = 1,
    }
 }
 
 worldData = {
+   state = enums.game_states.MAIN_ACTION,
    grid = {
       width = nil,
       height = nil,
       border = nil,
    },
+   current_dialogue = {
+      name = nil,
+      avatar = nil,
+      text = nil,
+      time_since_started_printing = 0,
+      len_to_print = 0,
+      full_chunk = nil,
+      chunk_index = 1,
+      chunk_length = 0,
+   },
+   cursor_blink_time = 0,
 }
 
 
@@ -86,6 +109,10 @@ keyState = {
     pressed = false,
     enabled = true
   },
+  p = {
+     pressed = false,
+     enabled = true
+  }
 }
 
 player = {
@@ -135,16 +162,16 @@ function love.load()
    assets.images.background = love.graphics.newImage("graphics/background.png")
    assets.images.player = love.graphics.newImage("graphics/spaceship_placeholder.png")
    assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
+   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
    assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
    assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
    assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
    assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
 
-
-
    -- fonts
    assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
    assets.fonts.header = love.graphics.newFont("fonts/pixeboy.ttf", 56, "none")
+   assets.fonts.dialogue = love.graphics.newFont("fonts/pixeboy.ttf", 22, "none")
 
    -- sounds
 
@@ -153,9 +180,7 @@ end
 
 
 -- runs continuously. logic and game state updates go here
-function love.update()
-   -- print("spamming the console log XD")
-
+function love.update(dt)
    -- Player movement
      if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
        player.x = player.x + player.step
@@ -304,8 +329,40 @@ function love.update()
               love.event.quit("restart")
            end
 
+           if not love.keyboard.isDown('p') then
+              keyState.p.pressed = false
+            end
 
+           if worldData.state == enums.game_states.DIALOGUE then
+              local full_len = string.len(worldData.current_dialogue.text)
+              local chars_per_second = 45
+              local len_to_print = chars_per_second * worldData.current_dialogue.time_since_started_printing
+              worldData.current_dialogue.len_to_print = len_to_print
+              worldData.current_dialogue.time_since_started_printing = dt + worldData.current_dialogue.time_since_started_printing
 
+              if full_len > len_to_print then
+                 worldData.cursor_blink_time = 5000
+              else
+                 worldData.cursor_blink_time = worldData.cursor_blink_time + dt
+                 if worldData.cursor_blink_time > 1 then
+                    worldData.cursor_blink_time = 0
+                 end
+              end
+           end
+
+           if love.keyboard.isDown('p')
+              and not keyState.p.pressed
+              and worldData.state == enums.game_states.MAIN_ACTION then
+              -- TODO: wrap all of game loop in game state check to make sure we're handling input right
+              keyState.p.pressed = true
+              display_dialogue(dialogue.introduction)
+           end
+           if love.keyboard.isDown('p')
+              and worldData.state == enums.game_states.DIALOGUE
+              and not keyState.p.pressed then
+              keyState.p.pressed = true
+              advance_dialogue()
+           end
 
 end
 
@@ -313,7 +370,7 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-   print_header("GGJ 2021", 400, 300)
+
    draw_in_grid(assets.images.player, player.x, player.y, player.facing)
    draw_in_grid(assets.images.obstacle, 1, 1, 0)
    draw_in_grid(assets.images.obstacle, 13, 4, 0)
@@ -327,8 +384,26 @@ function love.draw()
    love.graphics.draw(commandBar.image[4], 258, 108, 0, 1, 1, 0, 0, 0, 0)
    love.graphics.draw(commandBar.image[5], 321, 108, 0, 1, 1, 0, 0, 0, 0)
 
-  -- love.graphics.draw(assets.images.player, 300, 400, player.facing)
+   -- love.graphics.draw(assets.images.player, 300, 400, player.facing)
 
+   if worldData.state == enums.game_states.DIALOGUE then
+      local prev_r, prev_g, prev_b, prev_a = love.graphics.getColor()
+
+      -- overlay to dim the play grid while dialogue is happening
+      love.graphics.setColor(0, 0, 0, 0.75)
+      love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
+      -- render currently set avatar, name, and text
+      if worldData.current_dialogue then
+         love.graphics.setColor(0, 0.8, 0, 1)
+         love.graphics.draw(assets.images[worldData.current_dialogue.avatar], 537, 33)
+         print_name(worldData.current_dialogue.name)
+         local substr = string.sub(worldData.current_dialogue.text, 1, worldData.current_dialogue.len_to_print)
+         print_dialogue_text(substr)
+         print_dialogue_continue_caret()
+      end
+
+      love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
+   end
 end
 
 
@@ -339,6 +414,21 @@ end
 
 function print_header(text, x_pos, y_pos)
    love.graphics.print(text, assets.fonts.header, x_pos, y_pos, 0, 1, 1)
+end
+
+function print_name(name)
+   love.graphics.print(name, assets.fonts.regular, 680, 33)
+end
+
+function print_dialogue_text(text)
+   love.graphics.printf(text, assets.fonts.dialogue, 680, 65, 320)
+end
+
+function print_dialogue_continue_caret()
+   -- TODO: make this blink
+   if worldData.cursor_blink_time < 0.5 then
+      love.graphics.print(">", assets.fonts.regular, 975, 145)
+   end
 end
 
 
@@ -464,4 +554,34 @@ function love.keyreleased( key )
       keyState.alt.pressed = false
    end
 --   print(text) --Remove comment to debug keypress
+end
+
+
+function display_dialogue(dialogue_chunk)
+   worldData.state = enums.game_states.DIALOGUE
+   worldData.current_dialogue.full_chunk = dialogue_chunk
+   worldData.current_dialogue.chunk_index = 0
+   local size = 0
+   for i,x in ipairs(dialogue_chunk) do
+      size = size + 1
+   end
+   worldData.current_dialogue.chunk_length = size
+   advance_dialogue()
+end
+
+function advance_dialogue()
+   local idx = worldData.current_dialogue.chunk_index + 1
+   local dia = worldData.current_dialogue.full_chunk[idx]
+
+   if idx > worldData.current_dialogue.chunk_length then
+      worldData.state = enums.game_states.MAIN_ACTION
+      return
+   end
+
+   worldData.current_dialogue.name = dia.name
+   worldData.current_dialogue.text = dia.text
+   worldData.current_dialogue.avatar = dia.avatar
+   worldData.current_dialogue.time_since_started_printing = 0
+
+   worldData.current_dialogue.chunk_index = idx
 end
