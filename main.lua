@@ -35,10 +35,10 @@ function love.load()
 
   -- images
   assets.images.background = love.graphics.newImage("graphics/background.png")
-  assets.player.right = love.graphics.newImage("graphics/spaceship_placeholder.png")
-  assets.player.down = love.graphics.newImage("graphics/left_placeholder.png")
-  assets.player.left = love.graphics.newImage("graphics/right_placeholder.png")
-  assets.player.up = love.graphics.newImage("graphics/obstacle_placeholder.png")
+  assets.player.right = love.graphics.newImage("graphics/right_facing_placeholder.png")
+  assets.player.down = love.graphics.newImage("graphics/down_facing_placeholder.png")
+  assets.player.left = love.graphics.newImage("graphics/left_facing_placeholder.png")
+  assets.player.up = love.graphics.newImage("graphics/up_facing_placeholder.png")
   assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
@@ -99,18 +99,33 @@ function love.update(dt)
       keyState.four.pressed = true
       print("Running commands...")
       for i = 1, 5 do
-        if commandBar.command[i]==1 then
+        if commandBar.command[i]==1 and player.facingIndex == 0 then
           player.x = player.x + player.step
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
+        elseif commandBar.command[i]==1 and player.facingIndex == 1 then
+          player.y = player.y + player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
+        elseif commandBar.command[i]==1 and player.facingIndex == 2 then
+           player.x = player.x - player.step
+           commandBar.command[i] = 0
+           commandBar.image[i] = assets.images.blank
+        elseif commandBar.command[i]==1 and player.facingIndex == 3 then
+           player.y = player.y + player.step
+           commandBar.command[i] = 0
+           commandBar.image[i] = assets.images.blank
         end
+
         if commandBar.command[i]==2 then
-          player.y = player.y - player.step
+          player.facingIndex = (player.facingIndex + 3)%4
+          print(player.facingIndex)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
         if commandBar.command[i]==3 then
-          player.y = player.y + player.step
+          player.facingIndex = (player.facingIndex + 1)%4
+          print(player.facingIndex)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
