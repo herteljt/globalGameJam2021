@@ -92,7 +92,7 @@ keyState = {
     pressed = false,
     enabled = true
   },
-  five = {
+  backspace = {
     pressed = false,
     enabled = true
   },
@@ -176,12 +176,6 @@ function love.update()
          player.y = worldData.grid.height - player.height - worldData.grid.border
        end
 
-       -- Enable command input
-       if love.keyboard.isDown('5') and keyState.five.pressed == false then
-         keyState.five.pressed = true
-         print("Enter first command: (1-Forward, 2-Left, 3-Right)")
-         commandQueue[6] = true
-       end
 
        -- Enable command input
 
@@ -209,53 +203,12 @@ function love.update()
       end
 
 
-      -- Lots of copy pasta here. Probably should build a function that does this.
-      if love.keyboard.isDown('1') and keyState.one.pressed == false and commandQueue[6] == true then
-        commandQueue[commandQueue[7]] = 1   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[1])
-        print("Second Command: "..commandQueue[2])
-        print("Third Command: "..commandQueue[3])
-        print("Fourth Command: "..commandQueue[4])
-        print("Fifth Command: "..commandQueue[5])
-        if commandQueue[7] >= 7 then
-          commandQueue[7] = 1
-        else
-          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
-        end
-        print("Current Queue: "..commandQueue[7])
-        keyState.one.pressed = true
-      end
-
-      if love.keyboard.isDown('2') and keyState.two.pressed == false and commandQueue[6] == true then
-        commandQueue[commandQueue[7]] = 2   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[1])
-        print("Second Command: "..commandQueue[2])
-        print("Third Command: "..commandQueue[3])
-        print("Fourth Command: "..commandQueue[4])
-        print("Fifth Command: "..commandQueue[5])
-        if commandQueue[7] >= 7 then
-          commandQueue[7] = 1
-        else
-          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
-        end
-        print("Current Queue: "..commandQueue[7])
-        keyState.two.pressed = true
-      end
-
-      if love.keyboard.isDown('3') and keyState.three.pressed == false and commandQueue[6] == true then
-        commandQueue[commandQueue[7]] = 3   -- Set the value of the current command queue position to 1
-        print("First Command: "..commandQueue[1])
-        print("Second Command: "..commandQueue[2])
-        print("Third Command: "..commandQueue[3])
-        print("Fourth Command: "..commandQueue[4])
-        print("Fifth Command: "..commandQueue[5])
-        if commandQueue[7] >= 7 then
-          commandQueue[7] = 1
-        else
-          commandQueue[7] = commandQueue[7] + 1 -- shift the command question position
-        end
-        print("Current Queue: "..commandQueue[7])
-        keyState.three.pressed = true
+      -- Enable command input
+      if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
+        commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
+        commandBar.image[commandBar.index-1] = assets.images.blank
+        commandBar.index = commandBar.index - 1
+        keyState.backspace.pressed = true
       end
 
 
@@ -414,8 +367,8 @@ function love.keypressed( key )
    if key == "4" then
       text = "Four  -- pressed!"
    end
-   if key == "5" then
-      text = "Five  -- pressed!"
+   if key == "backspace" then
+      text = "Backspace  -- pressed!"
    end
    print(text) --Remove comment to debug keypress
 end
@@ -458,9 +411,9 @@ function love.keyreleased( key )
       text = "Four  -- released!"
       keyState.four.pressed = false
    end
-   if key == "5" then
-      text = "Five  -- released!"
-      keyState.five.pressed = false
+   if key == "backspace" then
+      text = "Backspace  -- released!"
+      keyState.backspace.pressed = false
    end
 --   print(text) --Remove comment to debug keypress
 end
