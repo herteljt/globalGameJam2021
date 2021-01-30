@@ -41,6 +41,26 @@ keyState = {
     pressed = false,
     enabled = true
   },
+  one = {
+    pressed = false,
+    enabled = true
+  },
+  two = {
+    pressed = false,
+    enabled = true
+  },
+  three = {
+    pressed = false,
+    enabled = true
+  },
+  four = {
+    pressed = false,
+    enabled = true
+  },
+  five = {
+    pressed = false,
+    enabled = true
+  },
 }
 
 -- initialized at game launch
@@ -218,9 +238,24 @@ function love.keypressed( key )
    if key == "space" then
       text = "Space  -- pressed!"
    end
-   --print(text) --Remove comment to debug keypress
+   if key == "1" then
+      text = "One  -- pressed!"
+   end
+   if key == "2" then
+      text = "Two  -- pressed!"
+   end
+   if key == "3" then
+      text = "Three  -- pressed!"
+   end
+   if key == "4" then
+      text = "Four  -- pressed!"
+   end
+   if key == "5" then
+      text = "Five  -- pressed!"
+   end
+   print(text) --Remove comment to debug keypress
 end
- 
+
 
 function love.keyreleased( key )
    if key == "d" or key =="right" then
@@ -243,5 +278,25 @@ function love.keyreleased( key )
       text = "Space  -- released!"
       keyState.space.pressed = false
    end
-   --print(text) --Remove comment to debug keypress
+   if key == "1" then
+      text = "One  -- released!"
+      keyState.one.pressed = false
+   end
+   if key == "2" then
+      text = "Two  -- released!"
+      keyState.two.pressed = false
+   end
+   if key == "3" then
+      text = "Three  -- released!"
+      keyState.three.pressed = false
+   end
+   if key == "4" then
+      text = "Four  -- released!"
+      keyState.four.pressed = false
+   end
+   if key == "5" then
+      text = "Five  -- released!"
+      keyState.five.pressed = false
+   end
+   print(text) --Remove comment to debug keypress
 end
