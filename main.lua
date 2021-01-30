@@ -91,73 +91,73 @@ function love.update(dt)
   end
 
 
-  -- Enable command input
-
-  if love.keyboard.isDown('4') and keyState.four.pressed == false then
-    keyState.four.pressed = true
-    print("Running commands...")
-    for i = 1, 5 do
-      if commandBar.command[i]==1 then
-        player.x = player.x + player.step
-        commandBar.command[i] = 0
-        commandBar.image[i] = assets.images.blank
+  if worldData.state == enums.game_states.MAIN_ACTION then
+    if love.keyboard.isDown('4') and keyState.four.pressed == false then
+      keyState.four.pressed = true
+      print("Running commands...")
+      for i = 1, 5 do
+        if commandBar.command[i]==1 then
+          player.x = player.x + player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
+        end
+        if commandBar.command[i]==2 then
+          player.y = player.y - player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
+        end
+        if commandBar.command[i]==3 then
+          player.y = player.y + player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
+        end
       end
-      if commandBar.command[i]==2 then
-        player.y = player.y - player.step
-        commandBar.command[i] = 0
-        commandBar.image[i] = assets.images.blank
+      commandBar.index = 1
+    end
+
+
+    -- Enable command input
+    if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
+      commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
+      commandBar.image[commandBar.index-1] = assets.images.blank
+      commandBar.index = commandBar.index - 1
+      keyState.backspace.pressed = true
+    end
+
+
+    -- New Commnad Queue Code
+    if love.keyboard.isDown('1') and keyState.one.pressed == false then
+      commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
+      commandBar.image[commandBar.index] = assets.images.forward
+      if commandBar.index >= 5 then
+        commandBar.index = 1
+      else
+        commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      if commandBar.command[i]==3 then
-        player.y = player.y + player.step
-        commandBar.command[i] = 0
-        commandBar.image[i] = assets.images.blank
+      keyState.one.pressed = true
+    end
+
+    if love.keyboard.isDown('2') and keyState.two.pressed == false then
+      commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
+      commandBar.image[commandBar.index] = assets.images.left
+      if commandBar.index >= 5 then
+        commandBar.index = 1
+      else
+        commandBar.index = commandBar.index + 1 -- shift the command question position
       end
+      keyState.two.pressed = true
     end
-    commandBar.index = 1
-  end
 
-
-  -- Enable command input
-  if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
-    commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
-    commandBar.image[commandBar.index-1] = assets.images.blank
-    commandBar.index = commandBar.index - 1
-    keyState.backspace.pressed = true
-  end
-
-
-  -- New Commnad Queue Code
-  if love.keyboard.isDown('1') and keyState.one.pressed == false then
-    commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
-    commandBar.image[commandBar.index] = assets.images.forward
-    if commandBar.index >= 5 then
-      commandBar.index = 1
-    else
-      commandBar.index = commandBar.index + 1 -- shift the command question position
+    if love.keyboard.isDown('3') and keyState.three.pressed == false then
+      commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
+      commandBar.image[commandBar.index] = assets.images.right
+      if commandBar.index >= 5 then
+        commandBar.index = 1
+      else
+        commandBar.index = commandBar.index + 1 -- shift the command question position
+      end
+      keyState.three.pressed = true
     end
-    keyState.one.pressed = true
-  end
-
-  if love.keyboard.isDown('2') and keyState.two.pressed == false then
-    commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
-    commandBar.image[commandBar.index] = assets.images.left
-    if commandBar.index >= 5 then
-      commandBar.index = 1
-    else
-      commandBar.index = commandBar.index + 1 -- shift the command question position
-    end
-    keyState.two.pressed = true
-  end
-
-  if love.keyboard.isDown('3') and keyState.three.pressed == false then
-    commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
-    commandBar.image[commandBar.index] = assets.images.right
-    if commandBar.index >= 5 then
-      commandBar.index = 1
-    else
-      commandBar.index = commandBar.index + 1 -- shift the command question position
-    end
-    keyState.three.pressed = true
   end
 
 
