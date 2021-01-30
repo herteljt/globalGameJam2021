@@ -17,7 +17,7 @@ function love.load()
   player.speed = 1
   player.score = 0
   player.step = 1
-  player.facing = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
+  player.facingIndex = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
 
   -- command bar
   commandBar.index = 1
@@ -35,7 +35,10 @@ function love.load()
 
   -- images
   assets.images.background = love.graphics.newImage("graphics/background.png")
-  assets.images.player = love.graphics.newImage("graphics/spaceship_placeholder.png")
+  assets.player.right = love.graphics.newImage("graphics/spaceship_placeholder.png")
+  assets.player.down = love.graphics.newImage("graphics/left_placeholder.png")
+  assets.player.left = love.graphics.newImage("graphics/right_placeholder.png")
+  assets.player.up = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
@@ -111,8 +114,12 @@ function love.update(dt)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
+        if checkCollisions() then --Check collisions
+
+        end
       end
       commandBar.index = 1
+
     end
 
 
@@ -125,7 +132,7 @@ function love.update(dt)
     end
 
 
-    -- New Commnad Queue Code
+    -- Command Bar Queue Code
     if love.keyboard.isDown('1') and keyState.one.pressed == false then
       commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.forward
@@ -166,9 +173,19 @@ function love.update(dt)
 
 
 
-
-
   -- Using space to debug facing
+  if love.keyboard.isDown('space') and keyState.space.pressed == false then
+    player.facingIndex = (player.facingIndex + 1)%4
+    keyState.space.pressed = true
+    print("Turn clockwise")
+    print("Player Facing: "..player.facingIndex)
+    print(player.facingIndex%4)
+    print("Player X: "..player.x)
+    print("Player Y: "..player.y)
+  end
+
+--[[
+  -- Original Index logic. Saving for posterity
   if love.keyboard.isDown('space') and keyState.space.pressed == false then
     player.facing = (player.facing + 1)%4
     keyState.space.pressed = true
@@ -192,7 +209,7 @@ function love.update(dt)
     print("Player X: "..player.x)
     print("Player Y: "..player.y)
   end
-
+]]--
 
   -- end program
   if love.keyboard.isDown('escape') then
@@ -245,11 +262,20 @@ end
 function love.draw()
   love.graphics.draw(assets.images.background, 0, 0)
 
-  draw_in_grid(assets.images.player, player.x, player.y, player.facing)
   draw_in_grid(assets.images.obstacle, 1, 1, 0)
   draw_in_grid(assets.images.obstacle, 13, 4, 0)
   draw_in_grid(assets.images.obstacle, 13, 5, 0)
   draw_in_grid(assets.images.obstacle, 12, 6, 0)
+
+  if player.facingIndex == 0 then
+    draw_in_grid(assets.player.right, player.x, player.y, player.facingIndex)
+  elseif player.facingIndex == 1 then
+    draw_in_grid(assets.player.down, player.x, player.y, player.facingIndex)
+  elseif player.facingIndex == 2 then
+    draw_in_grid(assets.player.left, player.x, player.y, player.facingIndex)
+  elseif player.facingIndex == 3 then
+    draw_in_grid(assets.player.up, player.x, player.y, player.facingIndex)
+  end
 
   -- Draw Command Bar
   love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
@@ -315,7 +341,7 @@ end
 
 function draw_in_grid(asset, grid_x, grid_y, facing)
   local x, y = grid_coords_to_pixels(grid_x, grid_y)
-  love.graphics.draw(asset, x, y, math.pi/2*facing)
+  love.graphics.draw(asset, x, y, 0)
 end
 
 
@@ -457,4 +483,12 @@ function advance_dialogue()
   worldData.current_dialogue.time_since_started_printing = 0
 
   worldData.current_dialogue.chunk_index = idx
+end
+
+
+-- Check checkCollisions
+
+function checkCollisions ()
+
+
 end

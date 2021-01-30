@@ -4,13 +4,18 @@
 assets = {
   images = {
     background = nil,
-    player = nil,
     obstacle = nil,
     fake_avatar = nil,
     forward = nil,
     left = nil,
     right = nil,
     blank = nil,
+  },
+  player = {
+    right = nil,
+    down = nil,
+    left = nil,
+    right = nil,
   },
   fonts = {
     regular = nil,
@@ -23,6 +28,7 @@ enums = {
   game_states = {
     MAIN_ACTION = 0,
     DIALOGUE = 1,
+    EXPLODED = 2
   }
 }
 
@@ -123,5 +129,6 @@ player = {
   speed = nil,
   score = nil,
   step = nil,
-  facing = nil,
+  facingIndex = nil,
+
 }
