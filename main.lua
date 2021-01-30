@@ -33,7 +33,11 @@ worldData = {
       text = nil,
       time_since_started_printing = 0,
       len_to_print = 0,
-   }
+      full_chunk = nil,
+      chunk_index = 1,
+      chunk_length = 0,
+   },
+   cursor_blink_time = 0,
 }
 
 commandQueue = { --indices start at 1 in Love2d rather than 0
@@ -265,6 +269,15 @@ function love.update(dt)
               local len_to_print = chars_per_second * worldData.current_dialogue.time_since_started_printing
               worldData.current_dialogue.len_to_print = len_to_print
               worldData.current_dialogue.time_since_started_printing = dt + worldData.current_dialogue.time_since_started_printing
+
+              if full_len > len_to_print then
+                 worldData.cursor_blink_time = 5000
+              else
+                 worldData.cursor_blink_time = worldData.cursor_blink_time + dt
+                 if worldData.cursor_blink_time > 1 then
+                    worldData.cursor_blink_time = 0
+                 end
+              end
            end
 
            if love.keyboard.isDown('p')
@@ -301,12 +314,12 @@ function love.draw()
       love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
       -- render currently set avatar, name, and text
       if worldData.current_dialogue then
-        love.graphics.setColor(0, 0.8, 0, 1)
-        love.graphics.draw(assets.images[worldData.current_dialogue.avatar], 537, 33)
-        print_name(worldData.current_dialogue.name)
-        local substr = string.sub(worldData.current_dialogue.text, 1, worldData.current_dialogue.len_to_print)
-        print_dialogue_text(substr)
-        print_dialogue_continue_caret()
+         love.graphics.setColor(0, 0.8, 0, 1)
+         love.graphics.draw(assets.images[worldData.current_dialogue.avatar], 537, 33)
+         print_name(worldData.current_dialogue.name)
+         local substr = string.sub(worldData.current_dialogue.text, 1, worldData.current_dialogue.len_to_print)
+         print_dialogue_text(substr)
+         print_dialogue_continue_caret()
       end
 
       love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
@@ -333,7 +346,9 @@ end
 
 function print_dialogue_continue_caret()
    -- TODO: make this blink
-   --love.graphics.print("v", assets.fonts.regular, 700, 700)
+   if worldData.cursor_blink_time < 0.5 then
+      love.graphics.print(">", assets.fonts.regular, 975, 145)
+   end
 end
 
 
@@ -468,22 +483,29 @@ test_dialogue_chunk = {
 
 function display_dialogue(dialogue_chunk)
    worldData.state = enums.game_states.DIALOGUE
-   worldData.current_dialogue.name = test_dialogue_chunk[1].name
-   worldData.current_dialogue.text = test_dialogue_chunk[1].text
-   worldData.current_dialogue.avatar = test_dialogue_chunk[1].avatar
-
-   -- game state has to go into dialogue mode (where it blocks other game state advancements and inputs)
-   -- avatar of first speaker animates in
-   -- also show their name at the top of the text box
-   -- text animates onto screen
-   -- text is broken up into three-line chunks. we should be able to just hard-code how many chars that is.
-   -- if there's more text in this speaker's bit, show a caret to advance
-   -- if this speaker is done, show a dot to advance
-   -- enter key will advance forward either speaker or text bit, OR if we're done, exit dialogue mode and clear the window
-
+   worldData.current_dialogue.full_chunk = test_dialogue_chunk
+   worldData.current_dialogue.chunk_index = 0
+   local size = 0
+   for i,x in ipairs(dialogue_chunk) do
+      size = size + 1
+   end
+   worldData.current_dialogue.chunk_length = size
+   advance_dialogue()
 end
 
 function advance_dialogue()
-   print("we're in dialogue mode and you hit 'p', so advancing the text one screen")
-   worldData.state = enums.game_states.MAIN_ACTION
+   local idx = worldData.current_dialogue.chunk_index + 1
+   local dia = worldData.current_dialogue.full_chunk[idx]
+
+   if idx > worldData.current_dialogue.chunk_length then
+      worldData.state = enums.game_states.MAIN_ACTION
+      return
+   end
+
+   worldData.current_dialogue.name = dia.name
+   worldData.current_dialogue.text = dia.text
+   worldData.current_dialogue.avatar = dia.avatar
+   worldData.current_dialogue.time_since_started_printing = 0
+
+   worldData.current_dialogue.chunk_index = idx
 end
