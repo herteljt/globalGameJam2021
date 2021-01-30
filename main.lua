@@ -17,34 +17,24 @@ assets = {
 
 worldData = {
    grid = {
-      width = 16,
-      height = 9,
-      border = 0,
+      width = nil,
+      height = nil,
+      border = nil,
    },
 }
 
-commandQueue = { --indices start at 1 in Love2d rather than 0
-0, -- 1st command
-0, -- 2nd command
-0, -- 3rd command
-0, -- 4th command
-0,  -- 5th command
-0,-- programming state (0 off, 1 program),
-1,  -- command index initialized to start at the 1st value
-}
 
+-- Command Bar variables.
+commandBar = { --Note: indices start at 1 in Love2d rather than 0
 
--- Command Bar variables. Storing both the commands and the images for display
-commandBar = { --indices start at 1 in Love2d rather than 0
-
-      index = 1, --keeping track of which command is selected
+      index = nil, --keeping track of which command is selected
 
       command = {
-        0, -- 1st command
-        0, -- 2nd command
-        0, -- 3rd command
-        0, -- 4th command
-        0,  -- 5th command
+        first = nil, -- 1st command
+        second = nil, -- 2nd command
+        third = nil, -- 3rd command
+        fourth = nil, -- 4th command
+        fifth = nil,  -- 5th command
         },
 
         image = {},
@@ -94,6 +84,19 @@ keyState = {
   },
 }
 
+player = {
+x = nil,
+y = nil,
+width = nil,
+height = nil,
+speed = nil,
+score = nil,
+step = nil,
+facing = nil,
+
+
+}
+
 -- initialized at game launch
 function love.load()
    print("Loading game...")
@@ -102,23 +105,28 @@ function love.load()
    waitingTimer = 10
 
   -- player
-  player = {}
     player.x = 4
     player.y = 3
     player.width = 1
     player.height = 1
-    player.bullets = {}
-    player.step = player.width
     player.speed = 1
     player.score = 0
+    player.step = 1
+    player.facing = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
 
     -- command bar
+    commandBar.index = 1
     commandBar.image[1]= love.graphics.newImage("graphics/blank_placeholder.png")
     commandBar.image[2]= love.graphics.newImage("graphics/blank_placeholder.png")
     commandBar.image[3]= love.graphics.newImage("graphics/blank_placeholder.png")
     commandBar.image[4]= love.graphics.newImage("graphics/blank_placeholder.png")
     commandBar.image[5]= love.graphics.newImage("graphics/blank_placeholder.png")
 
+
+    -- world data
+    worldData.grid.width = 16
+    worldData.grid.height = 9
+    worldData.grid.border = 0
 
    -- images
    assets.images.background = love.graphics.newImage("graphics/background.png")
