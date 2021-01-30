@@ -252,16 +252,14 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-<<<<<<< HEAD
-   print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
+  --[[ print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
    print_normal("First Command: "..commandQueue[3], 12, 50)
    print_normal("Second Command: "..commandQueue[4], 12, 70)
    print_normal("Third Command: "..commandQueue[5], 12, 90)
    print_normal("Fourth Command: "..commandQueue[6], 12, 110)
    print_normal("Fifth Command: "..commandQueue[7], 12, 130)
+   ]]--
    print_header("GGJ 2021", 400, 300)
-=======
->>>>>>> dea5b9bd6c772cf3882da09e83a0d790fe686db1
    draw_in_grid(assets.images.player, player.x, player.y)
    draw_in_grid(assets.images.obstacle, 1, 1)
    draw_in_grid(assets.images.obstacle, 13, 4)
