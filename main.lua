@@ -252,7 +252,9 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
    love.graphics.draw(assets.images.background, 0, 0)
-  --[[ print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
+  --[[ -- Text I used to debug queue. Can be removed.
+
+  print_normal("5 - Start to program, 1 - forward, 2 - up, 3 - down, 4 - execute program", 12, 18)
    print_normal("First Command: "..commandQueue[3], 12, 50)
    print_normal("Second Command: "..commandQueue[4], 12, 70)
    print_normal("Third Command: "..commandQueue[5], 12, 90)
