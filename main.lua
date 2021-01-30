@@ -112,7 +112,7 @@ function love.update(dt)
            commandBar.command[i] = 0
            commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 3 then
-           player.y = player.y + player.step
+           player.y = player.y - player.step
            commandBar.command[i] = 0
            commandBar.image[i] = assets.images.blank
         end
