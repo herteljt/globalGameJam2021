@@ -345,13 +345,6 @@ function love.update(dt)
   end
 
   if love.keyboard.isDown('p')
-    and not keyState.p.pressed
-    and worldData.state == enums.game_states.MAIN_ACTION then
-    -- TODO: wrap all of game loop in game state check to make sure we're handling input right
-    keyState.p.pressed = true
-    display_dialogue(dialogue.introduction)
-  end
-  if love.keyboard.isDown('p')
     and worldData.state == enums.game_states.DIALOGUE
     and not keyState.p.pressed then
     keyState.p.pressed = true
