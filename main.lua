@@ -74,21 +74,35 @@ end
 
 -- runs continuously. logic and game state updates go here
 function love.update(dt)
-  -- Player movement
-  if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
-    player.x = player.x + player.step
-    keyState.right.pressed = true
-  elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and keyState.left.pressed == false then
-    player.x = player.x - player.step
-    keyState.left.pressed = true
-  end
-  if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and keyState.up.pressed == false and keyState.up.enabled == true then
-    player.y = player.y - player.step
-    keyState.up.pressed = true
-  elseif (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and keyState.down.pressed == false then
-    player.y = player.y + player.step
-    keyState.down.pressed = true
-  end
+
+  -- Debug mode enables W/A/S/D movement and space rotates clockwise
+  if worldData.state == enums.game_states.DEBUG then
+    if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
+      player.x = player.x + player.step
+      keyState.right.pressed = true
+    elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and keyState.left.pressed == false then
+      player.x = player.x - player.step
+      keyState.left.pressed = true
+    end
+    if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and keyState.up.pressed == false and keyState.up.enabled == true then
+      player.y = player.y - player.step
+      keyState.up.pressed = true
+    elseif (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and keyState.down.pressed == false then
+      player.y = player.y + player.step
+      keyState.down.pressed = true
+    end
+
+    -- Using space to debug facing
+    if love.keyboard.isDown('space') and keyState.space.pressed == false then
+      player.facingIndex = (player.facingIndex + 1)%4
+      keyState.space.pressed = true
+      print("Turn clockwise")
+      print("Player Facing: "..player.facingIndex)
+      print(player.facingIndex%4)
+      print("Player X: "..player.x)
+      print("Player Y: "..player.y)
+    end
+end
 
 
   -- Prevent player from going offscreen
@@ -110,8 +124,8 @@ function love.update(dt)
 
 
   if worldData.state == enums.game_states.MAIN_ACTION then
-    if love.keyboard.isDown('4') and keyState.four.pressed == false then
-      keyState.four.pressed = true
+    if love.keyboard.isDown('return') and keyState.enter.pressed == false then
+      keyState.enter.pressed = true
       print("Running commands...")
       for i = 1, 5 do
         if commandBar.command[i]==1 and player.facingIndex == 0 then
@@ -159,13 +173,17 @@ function love.update(dt)
     if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
       commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
       commandBar.image[commandBar.index-1] = assets.images.blank
-      commandBar.index = commandBar.index - 1
+      if commandBar.index <= 1 then
+        commandBar.index = 1
+      else
+        commandBar.index = commandBar.index - 1
+      end
       keyState.backspace.pressed = true
     end
 
 
     -- Command Bar Queue Code
-    if love.keyboard.isDown('1') and keyState.one.pressed == false then
+    if (love.keyboard.isDown("up") or love.keyboard.isDown("w")) and keyState.up.pressed == false then
       commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.forward
       if commandBar.index >= 5 then
@@ -173,10 +191,10 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.one.pressed = true
+      keyState.up.pressed = true
     end
 
-    if love.keyboard.isDown('2') and keyState.two.pressed == false then
+    if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and keyState.left.pressed == false then
       commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.left
       if commandBar.index >= 5 then
@@ -184,10 +202,10 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.two.pressed = true
+      keyState.left.pressed = true
     end
 
-    if love.keyboard.isDown('3') and keyState.three.pressed == false then
+    if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
       commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.right
       if commandBar.index >= 5 then
@@ -195,26 +213,12 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.three.pressed = true
+      keyState.right.pressed = true
     end
   end
 
 
 
-
-
-
-
-  -- Using space to debug facing
-  if love.keyboard.isDown('space') and keyState.space.pressed == false then
-    player.facingIndex = (player.facingIndex + 1)%4
-    keyState.space.pressed = true
-    print("Turn clockwise")
-    print("Player Facing: "..player.facingIndex)
-    print(player.facingIndex%4)
-    print("Player X: "..player.x)
-    print("Player Y: "..player.y)
-  end
 
 --[[
   -- Original Index logic. Saving for posterity
@@ -231,17 +235,18 @@ function love.update(dt)
   end
 
 
+  ]]--
+
   if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
-    player.facing = player.facing - 1
+    if worldData.state == enums.game_states.DIALOGUE or worldData.state == enums.game_states.MAIN_ACTION then
+      worldData.state = enums.game_states.DEBUG
+      print("DEBUG MODE. W/A/S/D enabled")
+    elseif worldData.state == enums.game_states.DEBUG then
+      worldData.state = enums.game_states.MAIN_ACTION
+      print("MAIN ACTION MODE. W/A/S/D disabled")
+    end
     keyState.alt.pressed = true
-    player.x = player.x - math.cos(player.facing*math.pi/2)
-    player.y = player.y - math.sin(player.facing*math.pi/2)
-    print("Turn counterclockwise")
-    print("Player Facing: "..player.facing)
-    print("Player X: "..player.x)
-    print("Player Y: "..player.y)
   end
-]]--
 
   -- end program
   if love.keyboard.isDown('escape') then
@@ -294,7 +299,7 @@ end
 function love.draw()
   love.graphics.draw(assets.images.background, 0, 0)
   if commandBar.index > 5 then
-    love.graphics.printf("Command Queue Full. Execute commands(4) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
+    love.graphics.printf("Command Queue Full. Execute commands(enter) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
   end
 
 --  draw obstacles
@@ -468,7 +473,9 @@ function love.keypressed( key )
   if key == "lalt" then
     text = "Alt  -- pressed!"
   end
-
+  if key == "return" then
+    text = "Enter  -- pressed!"
+  end
   print(text) --Remove comment to debug keypress
 end
 
@@ -517,6 +524,10 @@ function love.keyreleased( key )
   if key == "lalt" then
     text = "Alt  -- released!"
     keyState.alt.pressed = false
+  end
+  if key == "return" then
+    text = "Enter  -- released!"
+    keyState.enter.pressed = false
   end
   --   print(text) --Remove comment to debug keypress
 end

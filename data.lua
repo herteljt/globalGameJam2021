@@ -26,7 +26,8 @@ enums = {
   game_states = {
     MAIN_ACTION = 0,
     DIALOGUE = 1,
-    EXPLODED = 2
+    EXPLODED = 2,
+    DEBUG = 3,
   }
 }
 
@@ -114,6 +115,10 @@ keyState = {
     enabled = true
   },
   p = {
+    pressed = false,
+    enabled = true
+  },
+  enter = {
     pressed = false,
     enabled = true
   }
