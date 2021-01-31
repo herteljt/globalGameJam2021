@@ -21,6 +21,8 @@ assets = {
   },
   player = {
   },
+  goal = {
+  },
   fonts = {
     regular = nil,
     header = nil,

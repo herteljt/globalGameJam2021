@@ -24,7 +24,8 @@ function love.load()
 
 
   -- Build levels
-  -- randomly place player on the board
+  -- randomly pick player coordinates within specified window
+  -- randomly pick goal coordinates within specified window
   -- place number of obstacles randomly on the board.
 
   -- player
@@ -37,6 +38,9 @@ function love.load()
   player.step = 1
   player.facingIndex = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
 
+  -- goal
+  assets.goal.x = love.math.random(6,12)
+  assets.goal.y = love.math.random(4,9)
 
   -- command bar
   commandBar.index = 1
