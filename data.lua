@@ -134,10 +134,6 @@ keyState = {
     pressed = false,
     enabled = true
   },
-  p = {
-    pressed = false,
-    enabled = true
-  },
   enter = {
     pressed = false,
     enabled = true

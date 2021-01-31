@@ -323,8 +323,8 @@ function love.update(dt)
     love.event.quit("restart")
   end
 
-  if not love.keyboard.isDown('p') then
-    keyState.p.pressed = false
+  if not love.keyboard.isDown('space') then
+    keyState.space.pressed = false
   end
 
   if worldData.state == enums.game_states.DIALOGUE then
@@ -346,8 +346,8 @@ function love.update(dt)
 
   if love.keyboard.isDown('space')
     and worldData.state == enums.game_states.DIALOGUE
-    and not keyState.p.pressed then
-    keyState.p.pressed = true
+    and not keyState.space.pressed then
+    keyState.space.pressed = true
     advance_dialogue()
   end
 end
