@@ -158,6 +158,5 @@ goal = {
   x = nil,
   y = nil,
   gridPosition = nil, -- Location as a single number on the grid
-  visibility = nil,  -- Is the goal visible
-
+  is_visible = false,  -- Is the goal visible
 }

@@ -41,7 +41,8 @@ function love.load()
   -- goal
   goal.x = love.math.random(5,15)
   goal.y = love.math.random(3,8)
-  goal.visibility = 0 --initially make it hidden
+  print("don't tell anyone but the goal is at (" .. goal.x .. ", " .. goal.y .. ").")
+  goal.is_visible = false --initially make it hidden
 
   -- command bar
   commandBar.index = 1
@@ -98,6 +99,9 @@ function love.load()
   buildLevel(0,141,numberObstacles)
 
   print("Game loaded! Let's go.")
+
+  worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.MAIN_ACTION
+  display_dialogue(dialogue.introduction)
 end
 
 
@@ -377,7 +381,7 @@ function love.draw()
   end
 
   -- Draw Goal
-  if goal.visibility == 0 then
+  if goal.is_visible then
     draw_in_grid(assets.images.goal, goal.x, goal.y)
   end
 
@@ -659,10 +663,17 @@ end
 function checkGoal (playerx, playery, goalx, goaly)
   if math.abs(playerx - goalx) <= 4 and math.abs(playery-goaly) <= 4 then
     if playerx == goalx and playery==goaly then
+      -- TODO: start playing win music
       print("You win!")
-      worldData.state = enums.game_states.WIN
+      worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.WIN
+      display_dialogue(dialogue.win)
     else
-      goal.visibility = 1
+      if not goal.is_visible then
+        -- TODO: start playing action music
+        worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.RUNNING_COMMAND_QUEUE
+        display_dialogue(dialogue.close_to_goal)
+        goal.is_visible = true
+      end
     end
   end
 end
