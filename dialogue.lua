@@ -4,7 +4,7 @@ dialogue.introduction = {
   {
     name = "Z85000",
     avatar = "z85000",
-    text = "System boot commencing."
+    text = "System boot commencing.\n\n(press spacebar to advance text)"
   },
   {
     name = "Z85000",
@@ -55,6 +55,21 @@ dialogue.introduction = {
     name = "Bored Teen",
     avatar = "bored_teenager",
     text = "You are their, uh, only hope."
+  },
+  {
+    name = "Z85000",
+    avatar = "z85000",
+    text = "Pilot your spaceco drone by entering commands into the command buffer (left/right for turns, up for thrust)."
+  },
+  {
+    name = "Z85000",
+    avatar = "z85000",
+    text = "When the buffer is full, press enter to send the commands to your drone to execute."
+  },
+  {
+    name = "Z85000",
+    avatar = "z85000",
+    text = "If you make a mistake, backspace will clear the last command from the buffer."
   },
 }
 
