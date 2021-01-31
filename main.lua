@@ -39,8 +39,9 @@ function love.load()
   player.facingIndex = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
 
   -- goal
-  assets.goal.x = love.math.random(6,12)
-  assets.goal.y = love.math.random(4,9)
+  goal.x = love.math.random(5,15)
+  goal.y = love.math.random(3,8)
+  goal.visibility = 0 --initially make it hidden
 
   -- command bar
   commandBar.index = 1
@@ -78,7 +79,7 @@ function love.load()
   assets.images.bored_teenager = love.graphics.newImage("graphics/teenager.png")
   assets.images.alien_excited = love.graphics.newImage("graphics/alien_excited.png")
   assets.images.alien_disappointed = love.graphics.newImage("graphics/alien_disappointed.png")
-
+  assets.images.goal = love.graphics.newImage("graphics/goal_placeholder.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -354,12 +355,6 @@ function love.draw()
   for i = 1,numberObstacles do
     draw_in_grid(assets.images.obstacle,math.floor(assets.obstacle[i]%16),math.floor(assets.obstacle[i]/16))
   end
---[[
-  draw_in_grid(assets.images.obstacle, 1, 1)
-  draw_in_grid(assets.images.obstacle, 13, 4)
-  draw_in_grid(assets.images.obstacle, 13, 5)
-  draw_in_grid(assets.images.obstacle, 12, 6)
-]]--
 
 
   if player.facingIndex == 0 then
@@ -370,6 +365,11 @@ function love.draw()
     draw_in_grid(assets.player.left, player.x, player.y)
   elseif player.facingIndex == 3 then
     draw_in_grid(assets.player.up, player.x, player.y)
+  end
+
+  -- Draw Goal
+  if goal.visibility == 0 then
+    draw_in_grid(assets.images.goal, goal.x, goal.y)
   end
 
 
@@ -616,6 +616,7 @@ end
 
 function buildLevel (start, stop, numberObstacles)
   player.gridLocation = player.y*16 + player.x
+  goal.gridLocation = goal.y*16 + goal.x
   print("Player grid location"..player.gridLocation)
   --player.gridLocation = love.math.random(start, stop)
 
@@ -641,7 +642,7 @@ function checkCollisions (x, y, obstacle, number)
     if playerLocation == obstacle[i] then
       print("COLLISION at "..obstacle[i])
       worldData.state = enums.game_states.EXPLODED
-
     end
   end
+
 end

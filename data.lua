@@ -18,10 +18,9 @@ assets = {
     bored_teenager = nil,
     alien_excited = nil,
     alien_disappointed = nil,
+    goal = nil,
   },
   player = {
-  },
-  goal = {
   },
   fonts = {
     regular = nil,
@@ -144,5 +143,13 @@ player = {
   step = nil,
   facingIndex = nil,
   gridPosition = nil, -- Location as a single number on the grid
+
+}
+
+goal = {
+  x = nil,
+  y = nil,
+  gridPosition = nil, -- Location as a single number on the grid
+  visibility = nil,  -- Is the goal visible
 
 }
