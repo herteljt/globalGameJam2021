@@ -322,10 +322,11 @@ function love.update(dt)
   if love.keyboard.isDown('r') then
     love.event.quit("restart")
   end
-
+--[[
   if not love.keyboard.isDown('p') then
     keyState.p.pressed = false
   end
+  ]]--
 
   if worldData.state == enums.game_states.DIALOGUE then
     local full_len = string.len(worldData.current_dialogue.text)
