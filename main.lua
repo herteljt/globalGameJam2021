@@ -681,7 +681,7 @@ end
 
 -- Check Goal
 function checkGoal (playerx, playery, goalx, goaly)
-  if math.abs(playerx - goalx) <= 4 and math.abs(playery-goaly) <= 4 then
+  if math.abs(playerx - goalx) <= 3 and math.abs(playery-goaly) <= 3 then --change to shrink finding region
     if playerx == goalx and playery==goaly then
       assets.music.state:stop()
       assets.music.state = assets.music.win -- Play win music
