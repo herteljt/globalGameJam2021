@@ -2,9 +2,7 @@
 
 -- global data. declared here, initialized in love.load
 assets = {
-  map = {
-    empty = nil,
-    asteriod = nil,
+  obstacle = {
   },
   images = {
     background = nil,
@@ -22,10 +20,6 @@ assets = {
     alien_disappointed = nil,
   },
   player = {
-    right = nil,
-    down = nil,
-    left = nil,
-    right = nil,
   },
   fonts = {
     regular = nil,
@@ -38,7 +32,8 @@ enums = {
   game_states = {
     MAIN_ACTION = 0,
     DIALOGUE = 1,
-    EXPLODED = 2
+    EXPLODED = 2,
+    DEBUG = 3,
   }
 }
 
@@ -126,6 +121,10 @@ keyState = {
     enabled = true
   },
   p = {
+    pressed = false,
+    enabled = true
+  },
+  enter = {
     pressed = false,
     enabled = true
   }

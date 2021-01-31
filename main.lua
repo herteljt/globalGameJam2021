@@ -10,6 +10,15 @@ function love.load()
   waiting = true
   waitingTimer = 10
 
+  -- obstacles
+  assets.obstacle = {53, 68, 109, 141}
+  numberObstacles = #assets.obstacle -- get size
+  for i, v in ipairs(assets.obstacle) do end -- iterate
+
+
+
+
+
   -- player
   player.x = 4
   player.y = 3
@@ -22,11 +31,11 @@ function love.load()
 
   -- command bar
   commandBar.index = 1
-  commandBar.image[1]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[2]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[3]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[4]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[5]= love.graphics.newImage("graphics/blank_placeholder.png")
+  commandBar.image[1]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[2]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[3]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[4]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[5]= love.graphics.newImage("graphics/transparent_placeholder.png")
 
 
   -- world data
@@ -34,18 +43,22 @@ function love.load()
   worldData.grid.height = 9
   worldData.grid.border = 0
 
-  -- images
-  assets.images.background = love.graphics.newImage("graphics/background.png")
+
+  -- player
   assets.player.right = love.graphics.newImage("graphics/player_right.png")
   assets.player.down = love.graphics.newImage("graphics/player_down.png")
   assets.player.left = love.graphics.newImage("graphics/player_left.png")
   assets.player.up = love.graphics.newImage("graphics/player_up.png")
+
+
+  -- images
+  assets.images.background = love.graphics.newImage("graphics/background.png")
   assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
-  assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
+  assets.images.blank = love.graphics.newImage("graphics/transparent_placeholder.png")
   assets.images.z85000 = love.graphics.newImage("graphics/z85000.png")
   assets.images.biff_enthusiastic = love.graphics.newImage("graphics/biff_enthusiastic.png")
   assets.images.biff_tired = love.graphics.newImage("graphics/biff_tired.png")
@@ -53,8 +66,6 @@ function love.load()
   assets.images.alien_excited = love.graphics.newImage("graphics/alien_excited.png")
   assets.images.alien_disappointed = love.graphics.newImage("graphics/alien_disappointed.png")
 
-  assets.map.empty = love.graphics.newImage("graphics/empty_space_placeholder.png")
-  assets.map.asteriod = love.graphics.newImage("graphics/obstacle_placeholder.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -69,21 +80,35 @@ end
 
 -- runs continuously. logic and game state updates go here
 function love.update(dt)
-  -- Player movement
-  if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
-    player.x = player.x + player.step
-    keyState.right.pressed = true
-  elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and keyState.left.pressed == false then
-    player.x = player.x - player.step
-    keyState.left.pressed = true
-  end
-  if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and keyState.up.pressed == false and keyState.up.enabled == true then
-    player.y = player.y - player.step
-    keyState.up.pressed = true
-  elseif (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and keyState.down.pressed == false then
-    player.y = player.y + player.step
-    keyState.down.pressed = true
-  end
+
+  -- Debug mode enables W/A/S/D movement and space rotates clockwise
+  if worldData.state == enums.game_states.DEBUG then
+    if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
+      player.x = player.x + player.step
+      keyState.right.pressed = true
+    elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and keyState.left.pressed == false then
+      player.x = player.x - player.step
+      keyState.left.pressed = true
+    end
+    if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and keyState.up.pressed == false and keyState.up.enabled == true then
+      player.y = player.y - player.step
+      keyState.up.pressed = true
+    elseif (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and keyState.down.pressed == false then
+      player.y = player.y + player.step
+      keyState.down.pressed = true
+    end
+
+    -- Using space to debug facing
+    if love.keyboard.isDown('space') and keyState.space.pressed == false then
+      player.facingIndex = (player.facingIndex + 1)%4
+      keyState.space.pressed = true
+      print("Turn clockwise")
+      print("Player Facing: "..player.facingIndex)
+      print(player.facingIndex%4)
+      print("Player X: "..player.x)
+      print("Player Y: "..player.y)
+    end
+end
 
 
   -- Prevent player from going offscreen
@@ -105,26 +130,30 @@ function love.update(dt)
 
 
   if worldData.state == enums.game_states.MAIN_ACTION then
-    if love.keyboard.isDown('4') and keyState.four.pressed == false then
-      keyState.four.pressed = true
+    if love.keyboard.isDown('return') and keyState.enter.pressed == false then
+      keyState.enter.pressed = true
       print("Running commands...")
       for i = 1, 5 do
         if commandBar.command[i]==1 and player.facingIndex == 0 then
+          checkCollisions(player.x+player.step,player.y,assets.obstacle, numberObstacles)
           player.x = player.x + player.step
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 1 then
+          checkCollisions(player.x,player.y+player.step,assets.obstacle, numberObstacles)
           player.y = player.y + player.step
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 2 then
-           player.x = player.x - player.step
-           commandBar.command[i] = 0
-           commandBar.image[i] = assets.images.blank
+          checkCollisions(player.x-player.step,player.y,assets.obstacle, numberObstacles)
+          player.x = player.x - player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 3 then
-           player.y = player.y - player.step
-           commandBar.command[i] = 0
-           commandBar.image[i] = assets.images.blank
+          checkCollisions(player.x,player.y-player.step,assets.obstacle, numberObstacles)
+          player.y = player.y - player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
         end
 
         if commandBar.command[i]==2 then
@@ -139,9 +168,7 @@ function love.update(dt)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
-        if checkCollisions() then --Check collisions
 
-        end
       end
       commandBar.index = 1
 
@@ -152,13 +179,17 @@ function love.update(dt)
     if love.keyboard.isDown('backspace') and keyState.backspace.pressed == false then
       commandBar.command[commandBar.index-1] = 0   -- Set the value of the current command queue position to 0
       commandBar.image[commandBar.index-1] = assets.images.blank
-      commandBar.index = commandBar.index - 1
+      if commandBar.index <= 1 then
+        commandBar.index = 1
+      else
+        commandBar.index = commandBar.index - 1
+      end
       keyState.backspace.pressed = true
     end
 
 
     -- Command Bar Queue Code
-    if love.keyboard.isDown('1') and keyState.one.pressed == false then
+    if (love.keyboard.isDown("up") or love.keyboard.isDown("w")) and keyState.up.pressed == false then
       commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.forward
       if commandBar.index >= 5 then
@@ -166,10 +197,10 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.one.pressed = true
+      keyState.up.pressed = true
     end
 
-    if love.keyboard.isDown('2') and keyState.two.pressed == false then
+    if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and keyState.left.pressed == false then
       commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.left
       if commandBar.index >= 5 then
@@ -177,10 +208,10 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.two.pressed = true
+      keyState.left.pressed = true
     end
 
-    if love.keyboard.isDown('3') and keyState.three.pressed == false then
+    if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and keyState.right.pressed == false then
       commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.right
       if commandBar.index >= 5 then
@@ -188,26 +219,12 @@ function love.update(dt)
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
-      keyState.three.pressed = true
+      keyState.right.pressed = true
     end
   end
 
 
 
-
-
-
-
-  -- Using space to debug facing
-  if love.keyboard.isDown('space') and keyState.space.pressed == false then
-    player.facingIndex = (player.facingIndex + 1)%4
-    keyState.space.pressed = true
-    print("Turn clockwise")
-    print("Player Facing: "..player.facingIndex)
-    print(player.facingIndex%4)
-    print("Player X: "..player.x)
-    print("Player Y: "..player.y)
-  end
 
 --[[
   -- Original Index logic. Saving for posterity
@@ -224,17 +241,18 @@ function love.update(dt)
   end
 
 
+  ]]--
+
   if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
-    player.facing = player.facing - 1
+    if worldData.state == enums.game_states.DIALOGUE or worldData.state == enums.game_states.MAIN_ACTION then
+      worldData.state = enums.game_states.DEBUG
+      print("DEBUG MODE. W/A/S/D enabled")
+    elseif worldData.state == enums.game_states.DEBUG then
+      worldData.state = enums.game_states.MAIN_ACTION
+      print("MAIN ACTION MODE. W/A/S/D disabled")
+    end
     keyState.alt.pressed = true
-    player.x = player.x - math.cos(player.facing*math.pi/2)
-    player.y = player.y - math.sin(player.facing*math.pi/2)
-    print("Turn counterclockwise")
-    print("Player Facing: "..player.facing)
-    print("Player X: "..player.x)
-    print("Player Y: "..player.y)
   end
-]]--
 
   -- end program
   if love.keyboard.isDown('escape') then
@@ -295,24 +313,31 @@ function love.draw()
   love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
 
   if commandBar.index > 5 then
-    love.graphics.printf("Command Queue Full. Execute commands(4) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
+    love.graphics.printf("Command Queue Full. Execute commands(enter) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
   end
---  drawMap()
 
-  draw_in_grid(assets.images.obstacle, 1, 1, 0)
-  draw_in_grid(assets.images.obstacle, 13, 4, 0)
-  draw_in_grid(assets.images.obstacle, 13, 5, 0)
-  draw_in_grid(assets.images.obstacle, 12, 6, 0)
+--  draw obstacles
+  for i = 1,numberObstacles do
+    draw_in_grid(assets.images.obstacle,math.floor(assets.obstacle[i]%16),math.floor(assets.obstacle[i]/16))
+  end
+--[[
+  draw_in_grid(assets.images.obstacle, 1, 1)
+  draw_in_grid(assets.images.obstacle, 13, 4)
+  draw_in_grid(assets.images.obstacle, 13, 5)
+  draw_in_grid(assets.images.obstacle, 12, 6)
+]]--
+
 
   if player.facingIndex == 0 then
-    draw_in_grid(assets.player.right, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.right, player.x, player.y)
   elseif player.facingIndex == 1 then
-    draw_in_grid(assets.player.down, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.down, player.x, player.y)
   elseif player.facingIndex == 2 then
-    draw_in_grid(assets.player.left, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.left, player.x, player.y)
   elseif player.facingIndex == 3 then
-    draw_in_grid(assets.player.up, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.up, player.x, player.y)
   end
+
 
   -- Draw Command Bar
   love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
@@ -342,7 +367,16 @@ function love.draw()
 
     love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
   end
+
+  -- overlay to dim the play grid when exploded
+    if worldData.state == enums.game_states.EXPLODED then
+      love.graphics.setColor(150, 0, 0, 0.5)
+      love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
+      love.graphics.printf("EXPLOSION!!", assets.fonts.dialogue, 680, 65, 320)
+    end
+
 end
+
 
 
 -- helpers for rendering text to screen at a pixel position
@@ -377,9 +411,9 @@ end
   end
 ]]--
 
-function draw_in_grid(asset, grid_x, grid_y, facing)
+function draw_in_grid(asset, grid_x, grid_y)
   local x, y = grid_coords_to_pixels(grid_x, grid_y)
-  love.graphics.draw(asset, x, y, 0)
+  love.graphics.draw(asset, x, y)
 end
 
 
@@ -454,7 +488,9 @@ function love.keypressed( key )
   if key == "lalt" then
     text = "Alt  -- pressed!"
   end
-
+  if key == "return" then
+    text = "Enter  -- pressed!"
+  end
   print(text) --Remove comment to debug keypress
 end
 
@@ -504,6 +540,10 @@ function love.keyreleased( key )
     text = "Alt  -- released!"
     keyState.alt.pressed = false
   end
+  if key == "return" then
+    text = "Enter  -- released!"
+    keyState.enter.pressed = false
+  end
   --   print(text) --Remove comment to debug keypress
 end
 
@@ -541,7 +581,15 @@ end
 
 -- Check checkCollisions
 
-function checkCollisions ()
+function checkCollisions (x, y, obstacle, number)
+  playerLocation = (y)*16 + x
+  print("Player Location: "..playerLocation)
+  for i = 1, number do
 
+    if playerLocation == obstacle[i] then
+      print("COLLISION at "..obstacle[i])
+      worldData.state = enums.game_states.EXPLODED
 
+    end
+  end
 end
