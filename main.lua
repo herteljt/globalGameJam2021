@@ -142,6 +142,7 @@ function love.update(dt)
         player.x = player.x + player.step
         commandBar.command[idx] = 0
         commandBar.image[idx] = assets.images.blank
+        checkGoal(player.x, player.y, goal.x, goal.y)
       elseif commandBar.command[idx]==1 and player.facingIndex == 1 then
         checkCollisions(player.x,player.y+player.step,assets.obstacle, numberObstacles)
         player.y = player.y + player.step
@@ -634,7 +635,6 @@ end
 
 
 -- Check checkCollisions
-
 function checkCollisions (x, y, obstacle, number)
   local playerLocation = (y)*16 + x
   print("Player Location: "..playerLocation)
@@ -644,5 +644,16 @@ function checkCollisions (x, y, obstacle, number)
       worldData.state = enums.game_states.EXPLODED
     end
   end
+end
 
+-- Check Goal
+function checkGoal (playerx, playery, goalx, goaly)
+  if math.abs(playerx - goalx) <= 3 and math.abs(playery-goaly) <= 3 then
+    if playerx == goalx and playery==goaly then
+      print("You win!")
+      worldData.state = enums.game_states.WIN
+    else
+      goal.visibility = 1
+    end
+  end
 end

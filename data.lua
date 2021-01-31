@@ -36,6 +36,7 @@ enums = {
     EXPLODED = 2,
     DEBUG = 3,
     RUNNING_COMMAND_QUEUE = 4,
+    WIN = 5,
   }
 }
 
