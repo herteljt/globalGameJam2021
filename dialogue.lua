@@ -73,16 +73,45 @@ dialogue.collision = {
 }
 
 
-
-dialogue.asdfasdf = {
+dialogue.close_to_goal = {
   {
-    name = "Stranded Alien",
-    avatar = "alien_excited",
-    text = "Oh sweet, a rescue ship!"
+    name = "z85000",
+    avatar = "z85000",
+    text = "Distress call detected. Opening channel."
   },
   {
-    name = "Stranded Alien",
+    name = "Stranded Traveler",
+    avatar = "alien_excited",
+    text = "Finally! I'm saved! We have passengers, many in their larval phases, and..."
+  },
+  {
+    name = "Stranded Traveler",
     avatar = "alien_disappointed",
-    text = "Oh, it's just one of those drones, dang."
+    text = "...great, a SpaceCo drone."
+  },
+  {
+    name = "Stranded Traveler",
+    avatar = "alien_disappointed",
+    text = "OK, I know how this works, there's fifty spacebucks in it for you if you get us out of here!"
+  },
+}
+
+
+
+dialogue.win = {
+  {
+    name = "z85000",
+    avatar = "z85000",
+    text = "Beginning rescue sequence. Tow line attached."
+  },
+  {
+    name = "Stranded Traveler",
+    avatar = "alien_disappointed",
+    text = "Hey, what is going on out there? You better not damage my ship, or by the sages of Yocat I will-"
+  },
+  {
+    name = "Biff Starleap",
+    avatar = "biff_enthusiastic",
+    text = "Good work, hero! You've done spaceco and its subsidiaries proud. Now bring those people home!"
   },
 }
