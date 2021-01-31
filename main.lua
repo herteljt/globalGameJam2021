@@ -11,9 +11,10 @@ function love.load()
   waitingTimer = 10
 
   -- obstacles
-  assets.obstacle = {0, 1, 18, 94, 109, 141}
+  assets.obstacle = {53, 68, 109, 141}
   numberObstacles = #assets.obstacle -- get size
   for i, v in ipairs(assets.obstacle) do end -- iterate
+
 
 
 
@@ -114,21 +115,25 @@ function love.update(dt)
       print("Running commands...")
       for i = 1, 5 do
         if commandBar.command[i]==1 and player.facingIndex == 0 then
+          checkCollisions(player.x+player.step,player.y,assets.obstacle, numberObstacles)
           player.x = player.x + player.step
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 1 then
+          checkCollisions(player.x,player.y+player.step,assets.obstacle, numberObstacles)
           player.y = player.y + player.step
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 2 then
-           player.x = player.x - player.step
-           commandBar.command[i] = 0
-           commandBar.image[i] = assets.images.blank
+          checkCollisions(player.x-player.step,player.y,assets.obstacle, numberObstacles)
+          player.x = player.x - player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
         elseif commandBar.command[i]==1 and player.facingIndex == 3 then
-           player.y = player.y - player.step
-           commandBar.command[i] = 0
-           commandBar.image[i] = assets.images.blank
+          checkCollisions(player.x,player.y-player.step,assets.obstacle, numberObstacles)
+          player.y = player.y - player.step
+          commandBar.command[i] = 0
+          commandBar.image[i] = assets.images.blank
         end
 
         if commandBar.command[i]==2 then
@@ -143,9 +148,7 @@ function love.update(dt)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
-        if checkCollisions(player.x,player.y,assets.map) then --Check collisions
-          print("BOOM!!")
-        end
+
       end
       commandBar.index = 1
 
@@ -344,7 +347,16 @@ function love.draw()
 
     love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
   end
+
+  -- overlay to dim the play grid when exploded
+    if worldData.state == enums.game_states.EXPLODED then
+      love.graphics.setColor(150, 0, 0, 0.5)
+      love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
+      love.graphics.printf("EXPLOSION!!", assets.fonts.dialogue, 680, 65, 320)
+    end
+
 end
+
 
 
 -- helpers for rendering text to screen at a pixel position
@@ -542,14 +554,15 @@ end
 
 -- Check checkCollisions
 
-function checkCollisions (x, y, map)
+function checkCollisions (x, y, obstacle, number)
+  playerLocation = (y)*16 + x
+  print("Player Location: "..playerLocation)
+  for i = 1, number do
 
-  for i = 1, 9 do
-     for j = 1, 16 do
+    if playerLocation == obstacle[i] then
+      print("COLLISION at "..obstacle[i])
+      worldData.state = enums.game_states.EXPLODED
 
-
-     end
+    end
   end
-
-
 end
