@@ -46,6 +46,7 @@ function love.load()
   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
   assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
+  assets.images.z85000 = love.graphics.newImage("graphics/z85000.png")
 
   assets.map.empty = love.graphics.newImage("graphics/empty_space_placeholder.png")
   assets.map.asteriod = love.graphics.newImage("graphics/obstacle_placeholder.png")

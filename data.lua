@@ -14,6 +14,7 @@ assets = {
     left = nil,
     right = nil,
     blank = nil,
+    z85000 = nil,
   },
   player = {
     right = nil,
