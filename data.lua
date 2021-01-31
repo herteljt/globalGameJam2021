@@ -12,6 +12,12 @@ assets = {
     left = nil,
     right = nil,
     blank = nil,
+    z85000 = nil,
+    biff_enthusiastic = nil,
+    biff_tired = nil,
+    bored_teenager = nil,
+    alien_excited = nil,
+    alien_disappointed = nil,
   },
   player = {
   },

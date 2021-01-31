@@ -59,6 +59,12 @@ function love.load()
   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
   assets.images.blank = love.graphics.newImage("graphics/transparent_placeholder.png")
+  assets.images.z85000 = love.graphics.newImage("graphics/z85000.png")
+  assets.images.biff_enthusiastic = love.graphics.newImage("graphics/biff_enthusiastic.png")
+  assets.images.biff_tired = love.graphics.newImage("graphics/biff_tired.png")
+  assets.images.bored_teenager = love.graphics.newImage("graphics/teenager.png")
+  assets.images.alien_excited = love.graphics.newImage("graphics/alien_excited.png")
+  assets.images.alien_disappointed = love.graphics.newImage("graphics/alien_disappointed.png")
 
 
   -- fonts
@@ -298,6 +304,14 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
   love.graphics.draw(assets.images.background, 0, 0)
+
+  local prev_r, prev_g, prev_b, prev_a = love.graphics.getColor()
+  love.graphics.setColor(0.1, 0.1, 0.1, 1)
+  print_normal("z85000", 40, 40)
+  love.graphics.setColor(1, 1, 1, 1)
+  print_normal("z85000", 40, 42)
+  love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
+
   if commandBar.index > 5 then
     love.graphics.printf("Command Queue Full. Execute commands(enter) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
   end
@@ -342,8 +356,9 @@ function love.draw()
     love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
     -- render currently set avatar, name, and text
     if worldData.current_dialogue then
-      love.graphics.setColor(0, 0.8, 0, 1)
+      love.graphics.setColor(1, 1, 1, 1)
       love.graphics.draw(assets.images[worldData.current_dialogue.avatar], 537, 33)
+      love.graphics.setColor(0, 0.8, 0, 1)
       print_name(worldData.current_dialogue.name)
       local substr = string.sub(worldData.current_dialogue.text, 1, worldData.current_dialogue.len_to_print)
       print_dialogue_text(substr)
@@ -558,6 +573,7 @@ function advance_dialogue()
   worldData.current_dialogue.text = dia.text
   worldData.current_dialogue.avatar = dia.avatar
   worldData.current_dialogue.time_since_started_printing = 0
+  worldData.current_dialogue.len_to_print = 0
 
   worldData.current_dialogue.chunk_index = idx
 end
