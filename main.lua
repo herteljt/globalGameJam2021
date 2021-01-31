@@ -22,7 +22,7 @@ function love.load()
 
 
   -- Build levels
-  buildLevel(0,141,numberObstacles, assets.obstacle)
+  buildLevel(0,141,numberObstacles)
 
 
   -- player
@@ -586,9 +586,9 @@ end
 
 -- Build Level
 
-function buildLevel (start, stop, numberObstacles, asset)
+function buildLevel (start, stop, numberObstacles)
   for i = 1,8 do
-    asset[i] = love.math.random(start, stop)
+    assets.obstacle[i] = love.math.random(start, stop)
   end
 end
 
