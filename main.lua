@@ -93,6 +93,8 @@ function love.load()
   assets.music.level = love.audio.newSource("/sounds/chill.mp3", "static")
   assets.music.encounter = love.audio.newSource("/sounds/action.mp3", "static")
   assets.music.win = love.audio.newSource("/sounds/win.mp3", "static")
+  assets.music.incomingmessage = love.audio.newSource("/sounds/incomingmessage.mp3", "static")
+
 
   assets.music.state = assets.music.intro
   assets.music.state:setLooping(true)

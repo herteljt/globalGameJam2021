@@ -29,6 +29,7 @@ assets = {
     level = nil,
     encounter = nil,
     win = nil,
+    incomingmessage = nil,
   },
   fonts = {
     regular = nil,
