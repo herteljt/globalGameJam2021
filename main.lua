@@ -22,11 +22,11 @@ function love.load()
 
   -- command bar
   commandBar.index = 1
-  commandBar.image[1]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[2]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[3]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[4]= love.graphics.newImage("graphics/blank_placeholder.png")
-  commandBar.image[5]= love.graphics.newImage("graphics/blank_placeholder.png")
+  commandBar.image[1]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[2]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[3]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[4]= love.graphics.newImage("graphics/transparent_placeholder.png")
+  commandBar.image[5]= love.graphics.newImage("graphics/transparent_placeholder.png")
 
 
   -- world data
@@ -45,7 +45,7 @@ function love.load()
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
-  assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
+  assets.images.blank = love.graphics.newImage("graphics/transparent_placeholder.png")
 
   assets.map.empty = love.graphics.newImage("graphics/empty_space_placeholder.png")
   assets.map.asteriod = love.graphics.newImage("graphics/obstacle_placeholder.png")
@@ -133,8 +133,8 @@ function love.update(dt)
           commandBar.command[i] = 0
           commandBar.image[i] = assets.images.blank
         end
-        if checkCollisions() then --Check collisions
-
+        if checkCollisions(player.x,player.y,assets.map) then --Check collisions
+          print("BOOM!!")
         end
       end
       commandBar.index = 1
