@@ -224,7 +224,6 @@ function love.update(dt)
     if love.keyboard.isDown('return') and keyState.enter.pressed == false then
       if commandBar.index < 5 then
         print("Command bar is not full.")
-        love.graphics.printf("The command queue is not full. Enter more commands.", assets.fonts.dialogue, 680, 65, 320)
       else
         print("Running commands...")
         commandBar.index = 1
@@ -372,15 +371,22 @@ function love.draw()
   print_normal("z85000", 40, 42)
   love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
 
-  if commandBar.index > 5 then
-    love.graphics.printf("Command Queue Full. Execute commands(enter) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
-  end
 
---  draw obstacles
-  for i = 1,numberObstacles do
-    draw_in_grid(assets.images.obstacle,math.floor(assets.obstacle[i]%16),math.floor(assets.obstacle[i]/16))
-  end
+  if worldData.state == enums.game_states.MAIN_ACTION then
+    if commandBar.index <= 5 then
+      love.graphics.printf("Available Commands: Turn Left (left), Turn Right (right), Forward (up)", assets.fonts.dialogue, 100, 65, 320)
+      love.graphics.printf("Command Queue is not Full. Enter more commands.", assets.fonts.dialogue, 600, 65, 320)
+    end
 
+    if commandBar.index > 5 then
+      love.graphics.printf("Command Queue Full. Enter to execute or backspace to delete.", assets.fonts.dialogue, 600, 65, 320)
+    end
+
+  --  draw obstacles
+    for i = 1,numberObstacles do
+      draw_in_grid(assets.images.obstacle,math.floor(assets.obstacle[i]%16),math.floor(assets.obstacle[i]/16))
+    end
+  end
 
   if player.facingIndex == 0 then
     draw_in_grid(assets.player.right, player.x, player.y)
