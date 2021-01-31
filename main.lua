@@ -80,7 +80,7 @@ function love.load()
   assets.images.bored_teenager = love.graphics.newImage("graphics/teenager.png")
   assets.images.alien_excited = love.graphics.newImage("graphics/alien_excited.png")
   assets.images.alien_disappointed = love.graphics.newImage("graphics/alien_disappointed.png")
-  assets.images.goal = love.graphics.newImage("graphics/goal_placeholder.png")
+  assets.images.goal = love.graphics.newImage("graphics/stranded_ship.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
