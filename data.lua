@@ -62,6 +62,7 @@ worldData = {
     full_chunk = nil,
     chunk_index = 1,
     chunk_length = 0,
+    game_mode_after_dialogue_done = enums.game_states.MAIN_ACTION,
   },
   cursor_blink_time = 0,
 }

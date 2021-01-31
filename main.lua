@@ -608,7 +608,7 @@ function advance_dialogue()
   local dia = worldData.current_dialogue.full_chunk[idx]
 
   if idx > worldData.current_dialogue.chunk_length then
-    worldData.state = enums.game_states.MAIN_ACTION
+    worldData.state = worldData.current_dialogue.game_mode_after_dialogue_done
     return
   end
 
@@ -649,7 +649,8 @@ function checkCollisions (x, y, obstacle, number)
   for i = 1, number do
     if playerLocation == obstacle[i] then
       print("COLLISION at "..obstacle[i])
-      worldData.state = enums.game_states.EXPLODED
+      worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.EXPLODED
+      display_dialogue(dialogue.collision)
     end
   end
 end
