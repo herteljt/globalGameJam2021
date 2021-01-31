@@ -1,5 +1,6 @@
 require "./data"
 require "./dialogue"
+require "./levels"
 
 
 -- initialized at game launch
@@ -45,6 +46,9 @@ function love.load()
   assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
   assets.images.blank = love.graphics.newImage("graphics/blank_placeholder.png")
+
+  assets.map.empty = love.graphics.newImage("graphics/empty_space_placeholder.png")
+  assets.map.asteriod = love.graphics.newImage("graphics/obstacle_placeholder.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -152,7 +156,7 @@ function love.update(dt)
       commandBar.command[commandBar.index] = 1   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.forward
       if commandBar.index >= 5 then
-        commandBar.index = 1
+        commandBar.index = 6
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
@@ -163,7 +167,7 @@ function love.update(dt)
       commandBar.command[commandBar.index] = 2   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.left
       if commandBar.index >= 5 then
-        commandBar.index = 1
+        commandBar.index = 6
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
@@ -174,7 +178,7 @@ function love.update(dt)
       commandBar.command[commandBar.index] = 3   -- Set the value of the current command queue position to 1
       commandBar.image[commandBar.index] = assets.images.right
       if commandBar.index >= 5 then
-        commandBar.index = 1
+        commandBar.index = 6
       else
         commandBar.index = commandBar.index + 1 -- shift the command question position
       end
@@ -276,6 +280,10 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
   love.graphics.draw(assets.images.background, 0, 0)
+  if commandBar.index > 5 then
+    love.graphics.printf("Command Queue Full. Execute commands(4) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
+  end
+--  drawMap()
 
   draw_in_grid(assets.images.obstacle, 1, 1, 0)
   draw_in_grid(assets.images.obstacle, 13, 4, 0)
@@ -381,6 +389,20 @@ function grid_coords_to_pixels(grid_x, grid_y)
 
   return pixels_x, pixels_y
 end
+
+-- Draw map
+
+function drawMap()
+   for i = 1, 9 do
+      for j = 1, 16 do
+
+         love.graphics.draw(assets.map[i][j],0,0)
+      end
+   end
+end
+
+
+
 
 --Functions to track key pressing
 function love.keypressed( key )

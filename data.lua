@@ -2,6 +2,10 @@
 
 -- global data. declared here, initialized in love.load
 assets = {
+  map = {
+    empty = nil,
+    asteriod = nil,
+  },
   images = {
     background = nil,
     obstacle = nil,
@@ -21,7 +25,7 @@ assets = {
     regular = nil,
     header = nil,
     dialogue = nil,
-  }
+  },
 }
 
 enums = {
