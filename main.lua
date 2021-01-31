@@ -88,12 +88,17 @@ function love.load()
   assets.fonts.dialogue = love.graphics.newFont("fonts/pixeboy.ttf", 22, "none")
 
   -- sounds
---[[
-  assets.sounds.level = love.audio.newSource("/sounds/chill.mp3", "static")
-  assets.sounds.level:setLooping(true)
-  assets.sounds.level:setVolume(.05)
-  assets.sounds.level:play()
-]]--
+
+  assets.music.intro = love.audio.newSource("/sounds/twinklyspace.mp3", "static")
+  assets.music.level = love.audio.newSource("/sounds/chill.mp3", "static")
+  assets.music.encounter = love.audio.newSource("/sounds/action.mp3", "static")
+  assets.music.win = love.audio.newSource("/sounds/win.mp3", "static")
+
+  assets.music.state = assets.music.intro
+  assets.music.state:setLooping(true)
+  assets.music.state:setVolume(.15)
+  assets.music.state:play()
+
 
   -- Build world
   buildLevel(0,141,numberObstacles)
@@ -663,13 +668,23 @@ end
 function checkGoal (playerx, playery, goalx, goaly)
   if math.abs(playerx - goalx) <= 4 and math.abs(playery-goaly) <= 4 then
     if playerx == goalx and playery==goaly then
-      -- TODO: start playing win music
+      assets.music.state:stop()
+      assets.music.state = assets.music.win -- Play win music
+      assets.music.state:setLooping(true)
+      assets.music.state:setVolume(.15)
+      assets.music.state:play()
+
       print("You win!")
       worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.WIN
       display_dialogue(dialogue.win)
     else
       if not goal.is_visible then
-        -- TODO: start playing action music
+        assets.music.state:stop()
+        assets.music.state = assets.music.encounter --start playing encounter music
+        assets.music.state:setLooping(false)
+        assets.music.state:setVolume(.15)
+        assets.music.state:play()
+
         worldData.current_dialogue.game_mode_after_dialogue_done = enums.game_states.RUNNING_COMMAND_QUEUE
         display_dialogue(dialogue.close_to_goal)
         goal.is_visible = true

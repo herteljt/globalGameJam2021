@@ -24,6 +24,8 @@ assets = {
 
   },
   music = {
+    state = nil,
+    intro = nil,
     level = nil,
     encounter = nil,
     win = nil,
