@@ -87,7 +87,12 @@ function love.load()
   assets.fonts.dialogue = love.graphics.newFont("fonts/pixeboy.ttf", 22, "none")
 
   -- sounds
-
+--[[
+  assets.sounds.level = love.audio.newSource("/sounds/chill.mp3", "static")
+  assets.sounds.level:setLooping(true)
+  assets.sounds.level:setVolume(.05)
+  assets.sounds.level:play()
+]]--
 
   -- Build world
   buildLevel(0,141,numberObstacles)

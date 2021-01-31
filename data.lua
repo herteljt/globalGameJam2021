@@ -20,7 +20,13 @@ assets = {
     alien_disappointed = nil,
     goal = nil,
   },
-  player = {
+  player ={
+
+  },
+  music = {
+    level = nil,
+    encounter = nil,
+    win = nil,
   },
   fonts = {
     regular = nil,
