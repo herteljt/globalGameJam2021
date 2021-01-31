@@ -71,8 +71,8 @@ function love.load()
   assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
-  assets.images.left = love.graphics.newImage("graphics/left_placeholder.png")
-  assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
+  assets.images.left = love.graphics.newImage("graphics/left_turn_placeholder.png")
+  assets.images.right = love.graphics.newImage("graphics/right_turn_placeholder.png")
   assets.images.blank = love.graphics.newImage("graphics/transparent_placeholder.png")
   assets.images.z85000 = love.graphics.newImage("graphics/z85000.png")
   assets.images.biff_enthusiastic = love.graphics.newImage("graphics/biff_enthusiastic.png")
@@ -302,7 +302,7 @@ function love.update(dt)
 
   ]]--
 
-  if love.keyboard.isDown('`') and keyState.accent.pressed == false then
+  if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
     if worldData.state == enums.game_states.DIALOGUE or worldData.state == enums.game_states.MAIN_ACTION then
       worldData.state = enums.game_states.DEBUG
       print("DEBUG MODE. W/A/S/D enabled")
@@ -310,7 +310,7 @@ function love.update(dt)
       worldData.state = enums.game_states.MAIN_ACTION
       print("MAIN ACTION MODE. W/A/S/D disabled")
     end
-    keyState.accent.pressed = true
+    keyState.alt.pressed = true
   end
 
   -- end program
@@ -323,8 +323,8 @@ function love.update(dt)
     love.event.quit("restart")
   end
 
-  if not love.keyboard.isDown('space') then
-    keyState.space.pressed = false
+  if not love.keyboard.isDown('p') then
+    keyState.p.pressed = false
   end
 
   if worldData.state == enums.game_states.DIALOGUE then
@@ -344,10 +344,17 @@ function love.update(dt)
     end
   end
 
-  if love.keyboard.isDown('space')
+  if love.keyboard.isDown('p')
+    and not keyState.p.pressed
+    and worldData.state == enums.game_states.MAIN_ACTION then
+    -- TODO: wrap all of game loop in game state check to make sure we're handling input right
+    keyState.p.pressed = true
+    display_dialogue(dialogue.introduction)
+  end
+  if love.keyboard.isDown('p')
     and worldData.state == enums.game_states.DIALOGUE
-    and not keyState.space.pressed then
-    keyState.space.pressed = true
+    and not keyState.p.pressed then
+    keyState.p.pressed = true
     advance_dialogue()
   end
 end
@@ -554,6 +561,9 @@ function love.keypressed( key )
   if key == "backspace" then
     text = "Backspace  -- pressed!"
   end
+  if key == "lalt" then
+    text = "Alt  -- pressed!"
+  end
   if key == "return" then
     text = "Enter  -- pressed!"
   end
@@ -602,9 +612,9 @@ function love.keyreleased( key )
     text = "Backspace  -- released!"
     keyState.backspace.pressed = false
   end
-  if key == "`" then
-    text = "`  -- released!"
-    keyState.accent.pressed = false
+  if key == "lalt" then
+    text = "Alt  -- released!"
+    keyState.alt.pressed = false
   end
   if key == "return" then
     text = "Enter  -- released!"
