@@ -139,5 +139,6 @@ player = {
   score = nil,
   step = nil,
   facingIndex = nil,
+  gridPosition = nil, -- Location as a single number on the grid
 
 }

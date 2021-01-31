@@ -9,9 +9,11 @@ function love.load()
 
   waiting = true
   waitingTimer = 10
-  numberObstacles = 8
+  numberObstacles = 16
 
   assets.obstacle = {}
+
+
 
   --[[
   -- obstacles
@@ -22,18 +24,19 @@ function love.load()
 
 
   -- Build levels
-  buildLevel(0,141,numberObstacles)
-
+  -- randomly place player on the board
+  -- place number of obstacles randomly on the board.
 
   -- player
-  player.x = 4
-  player.y = 3
+  player.x = love.math.random(0,5)
+  player.y = love.math.random(0,5)
   player.width = 1
   player.height = 1
   player.speed = 1
   player.score = 0
   player.step = 1
   player.facingIndex = 0 -- Using NSEW with 0 = E, 1 = N, 2 = W, 3 = S
+
 
   -- command bar
   commandBar.index = 1
@@ -79,6 +82,10 @@ function love.load()
   assets.fonts.dialogue = love.graphics.newFont("fonts/pixeboy.ttf", 22, "none")
 
   -- sounds
+
+
+  -- Build world
+  buildLevel(0,141,numberObstacles)
 
   print("Game loaded! Let's go.")
 end
@@ -587,19 +594,29 @@ end
 -- Build Level
 
 function buildLevel (start, stop, numberObstacles)
-  for i = 1,8 do
-    assets.obstacle[i] = love.math.random(start, stop)
+  player.gridLocation = player.y*16 + player.x
+  print("Player grid location"..player.gridLocation)
+  --player.gridLocation = love.math.random(start, stop)
+
+  for i = 1,numberObstacles do
+    local obstacle = love.math.random(start, stop)
+    if obstacle > player.gridLocation or obstacle < player.gridLocation then
+        assets.obstacle[i] = obstacle
+    else
+       print("Cannot place obstacle. Player collision conflict.")
+       assets.obstacle[i] = 141
+    end
   end
+
 end
 
 
 -- Check checkCollisions
 
 function checkCollisions (x, y, obstacle, number)
-  playerLocation = (y)*16 + x
+  local playerLocation = (y)*16 + x
   print("Player Location: "..playerLocation)
   for i = 1, number do
-
     if playerLocation == obstacle[i] then
       print("COLLISION at "..obstacle[i])
       worldData.state = enums.game_states.EXPLODED
