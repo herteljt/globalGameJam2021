@@ -3,8 +3,6 @@
 -- global data. declared here, initialized in love.load
 assets = {
   obstacle = {
-    x = nil,
-    y = nil,
   },
   images = {
     background = nil,
