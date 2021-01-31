@@ -58,6 +58,22 @@ dialogue.introduction = {
   },
 }
 
+
+dialogue.collision = {
+  {
+    name = "z85000",
+    avatar = "z85000",
+    text = "Warning: collision warnings on 15 second delay."
+  },
+  {
+    name = "z85000",
+    avatar = "z85000",
+    text = "Collision warning."
+  },
+}
+
+
+
 dialogue.asdfasdf = {
   {
     name = "Stranded Alien",
