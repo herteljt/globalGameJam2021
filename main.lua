@@ -518,6 +518,7 @@ function advance_dialogue()
   worldData.current_dialogue.text = dia.text
   worldData.current_dialogue.avatar = dia.avatar
   worldData.current_dialogue.time_since_started_printing = 0
+  worldData.current_dialogue.len_to_print = 0
 
   worldData.current_dialogue.chunk_index = idx
 end
