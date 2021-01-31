@@ -648,7 +648,7 @@ end
 
 -- Check Goal
 function checkGoal (playerx, playery, goalx, goaly)
-  if math.abs(playerx - goalx) <= 3 and math.abs(playery-goaly) <= 3 then
+  if math.abs(playerx - goalx) <= 4 and math.abs(playery-goaly) <= 4 then
     if playerx == goalx and playery==goaly then
       print("You win!")
       worldData.state = enums.game_states.WIN
