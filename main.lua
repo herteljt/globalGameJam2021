@@ -280,6 +280,14 @@ end
 -- runs continuously; this is the only place draw calls will work
 function love.draw()
   love.graphics.draw(assets.images.background, 0, 0)
+
+  local prev_r, prev_g, prev_b, prev_a = love.graphics.getColor()
+  love.graphics.setColor(0.1, 0.1, 0.1, 1)
+  print_normal("z85000", 40, 40)
+  love.graphics.setColor(1, 1, 1, 1)
+  print_normal("z85000", 40, 42)
+  love.graphics.setColor(prev_r, prev_g, prev_b, prev_a)
+
   if commandBar.index > 5 then
     love.graphics.printf("Command Queue Full. Execute commands(4) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
   end
