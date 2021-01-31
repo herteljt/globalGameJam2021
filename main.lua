@@ -9,14 +9,20 @@ function love.load()
 
   waiting = true
   waitingTimer = 10
+  numberObstacles = 8
 
+  assets.obstacle = {}
+
+  --[[
   -- obstacles
-  assets.obstacle = {53, 68, 109, 141}
+  assets.obstacle = {0, 1, 2, 53, 68, 109, 141}
   numberObstacles = #assets.obstacle -- get size
   for i, v in ipairs(assets.obstacle) do end -- iterate
+  ]]--
 
 
-
+  -- Build levels
+  buildLevel(0,141,numberObstacles, assets.obstacle)
 
 
   -- player
@@ -576,6 +582,14 @@ function advance_dialogue()
   worldData.current_dialogue.len_to_print = 0
 
   worldData.current_dialogue.chunk_index = idx
+end
+
+-- Build Level
+
+function buildLevel (start, stop, numberObstacles, asset)
+  for i = 1,8 do
+    asset[i] = love.math.random(start, stop)
+  end
 end
 
 
