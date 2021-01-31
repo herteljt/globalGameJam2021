@@ -220,11 +220,16 @@ function love.update(dt)
 
   if worldData.state == enums.game_states.MAIN_ACTION then
     if love.keyboard.isDown('return') and keyState.enter.pressed == false then
+      if commandBar.index < 5 then
+        print("Command bar is not full.")
+        love.graphics.printf("The command queue is not full. Enter more commands.", assets.fonts.dialogue, 680, 65, 320)
+      else
+        print("Running commands...")
+        commandBar.index = 1
+        commandBar.queue_timer = 100 -- start with very high number so we pop first action immediately
+        worldData.state = enums.game_states.RUNNING_COMMAND_QUEUE
+      end
       keyState.enter.pressed = true
-      print("Running commands...")
-      commandBar.index = 1
-      commandBar.queue_timer = 100 -- start with very high number so we pop first action immediately
-      worldData.state = enums.game_states.RUNNING_COMMAND_QUEUE
     end
 
 
