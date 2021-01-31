@@ -81,6 +81,7 @@ function love.load()
   assets.images.alien_excited = love.graphics.newImage("graphics/alien_excited.png")
   assets.images.alien_disappointed = love.graphics.newImage("graphics/alien_disappointed.png")
   assets.images.goal = love.graphics.newImage("graphics/stranded_ship.png")
+  assets.images.end_credits = love.graphics.newImage("graphics/end_credits.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -440,9 +441,15 @@ function love.draw()
     love.graphics.setColor(0, 0, 1, 0.5)
     love.graphics.rectangle('fill', 0, 0, 1024, 768)
     love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(assets.images.end_credits, 0, 0)
+    love.graphics.setColor(0, 0, 0, 1)
     print_header("You win!", 400, 300)
     print_header("Press 'r' to play again", 300, 400)
     print_header("or 'ESC' to quit.", 300, 450)
+    love.graphics.setColor(1, 1, 1, 1)
+    print_header("You win!", 402, 302)
+    print_header("Press 'r' to play again", 302, 402)
+    print_header("or 'ESC' to quit.", 302, 452)
   end
 
 end

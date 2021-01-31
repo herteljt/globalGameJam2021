@@ -19,6 +19,7 @@ assets = {
     alien_excited = nil,
     alien_disappointed = nil,
     goal = nil,
+    end_credits = nil,
   },
   player ={
 
