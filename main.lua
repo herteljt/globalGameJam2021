@@ -114,7 +114,60 @@ function love.update(dt)
       print("Player X: "..player.x)
       print("Player Y: "..player.y)
     end
-end
+  end
+
+
+  if worldData.state == enums.game_states.RUNNING_COMMAND_QUEUE then
+    commandBar.queue_timer = commandBar.queue_timer + dt
+
+    -- run a command from commandBar every 1 second
+    if commandBar.queue_timer > 1 then
+      commandBar.queue_timer = 0
+      local idx = commandBar.index
+
+      if commandBar.command[idx]==1 and player.facingIndex == 0 then
+        checkCollisions(player.x+player.step,player.y,assets.obstacle, numberObstacles)
+        player.x = player.x + player.step
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      elseif commandBar.command[idx]==1 and player.facingIndex == 1 then
+        checkCollisions(player.x,player.y+player.step,assets.obstacle, numberObstacles)
+        player.y = player.y + player.step
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      elseif commandBar.command[idx]==1 and player.facingIndex == 2 then
+        checkCollisions(player.x-player.step,player.y,assets.obstacle, numberObstacles)
+        player.x = player.x - player.step
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      elseif commandBar.command[idx]==1 and player.facingIndex == 3 then
+        checkCollisions(player.x,player.y-player.step,assets.obstacle, numberObstacles)
+        player.y = player.y - player.step
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      end
+
+      if commandBar.command[idx]==2 then
+        player.facingIndex = (player.facingIndex + 3)%4
+        print(player.facingIndex)
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      end
+      if commandBar.command[idx]==3 then
+        player.facingIndex = (player.facingIndex + 1)%4
+        print(player.facingIndex)
+        commandBar.command[idx] = 0
+        commandBar.image[idx] = assets.images.blank
+      end
+
+      -- if we're at the end of the command queue, return to normal gameplay
+      commandBar.index = idx + 1
+      if commandBar.index > 5 then
+        commandBar.index = 1
+        worldData.state = enums.game_states.MAIN_ACTION
+      end
+    end
+  end
 
 
   -- Prevent player from going offscreen
@@ -139,45 +192,9 @@ end
     if love.keyboard.isDown('return') and keyState.enter.pressed == false then
       keyState.enter.pressed = true
       print("Running commands...")
-      for i = 1, 5 do
-        if commandBar.command[i]==1 and player.facingIndex == 0 then
-          checkCollisions(player.x+player.step,player.y,assets.obstacle, numberObstacles)
-          player.x = player.x + player.step
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        elseif commandBar.command[i]==1 and player.facingIndex == 1 then
-          checkCollisions(player.x,player.y+player.step,assets.obstacle, numberObstacles)
-          player.y = player.y + player.step
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        elseif commandBar.command[i]==1 and player.facingIndex == 2 then
-          checkCollisions(player.x-player.step,player.y,assets.obstacle, numberObstacles)
-          player.x = player.x - player.step
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        elseif commandBar.command[i]==1 and player.facingIndex == 3 then
-          checkCollisions(player.x,player.y-player.step,assets.obstacle, numberObstacles)
-          player.y = player.y - player.step
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        end
-
-        if commandBar.command[i]==2 then
-          player.facingIndex = (player.facingIndex + 3)%4
-          print(player.facingIndex)
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        end
-        if commandBar.command[i]==3 then
-          player.facingIndex = (player.facingIndex + 1)%4
-          print(player.facingIndex)
-          commandBar.command[i] = 0
-          commandBar.image[i] = assets.images.blank
-        end
-
-      end
       commandBar.index = 1
-
+      commandBar.queue_timer = 100 -- start with very high number so we pop first action immediately
+      worldData.state = enums.game_states.RUNNING_COMMAND_QUEUE
     end
 
 
