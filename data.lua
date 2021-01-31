@@ -130,7 +130,7 @@ keyState = {
     pressed = false,
     enabled = true
   },
-  alt = {
+  accent = {
     pressed = false,
     enabled = true
   },

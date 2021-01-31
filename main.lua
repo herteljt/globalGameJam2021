@@ -302,7 +302,7 @@ function love.update(dt)
 
   ]]--
 
-  if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
+  if love.keyboard.isDown('`') and keyState.accent.pressed == false then
     if worldData.state == enums.game_states.DIALOGUE or worldData.state == enums.game_states.MAIN_ACTION then
       worldData.state = enums.game_states.DEBUG
       print("DEBUG MODE. W/A/S/D enabled")
@@ -310,7 +310,7 @@ function love.update(dt)
       worldData.state = enums.game_states.MAIN_ACTION
       print("MAIN ACTION MODE. W/A/S/D disabled")
     end
-    keyState.alt.pressed = true
+    keyState.accent.pressed = true
   end
 
   -- end program
@@ -554,9 +554,6 @@ function love.keypressed( key )
   if key == "backspace" then
     text = "Backspace  -- pressed!"
   end
-  if key == "lalt" then
-    text = "Alt  -- pressed!"
-  end
   if key == "return" then
     text = "Enter  -- pressed!"
   end
@@ -605,9 +602,9 @@ function love.keyreleased( key )
     text = "Backspace  -- released!"
     keyState.backspace.pressed = false
   end
-  if key == "lalt" then
-    text = "Alt  -- released!"
-    keyState.alt.pressed = false
+  if key == "`" then
+    text = "`  -- released!"
+    keyState.accent.pressed = false
   end
   if key == "return" then
     text = "Enter  -- released!"
