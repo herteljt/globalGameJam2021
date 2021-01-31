@@ -426,11 +426,20 @@ function love.draw()
   end
 
   -- overlay to dim the play grid when exploded
-    if worldData.state == enums.game_states.EXPLODED then
-      love.graphics.setColor(150, 0, 0, 0.5)
-      love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
-      love.graphics.printf("EXPLOSION!!", assets.fonts.dialogue, 680, 65, 320)
-    end
+  if worldData.state == enums.game_states.EXPLODED then
+    love.graphics.setColor(1, 0, 0, 0.5)
+    love.graphics.rectangle('fill', 0, 64 * 3, 1024, 768)
+    love.graphics.printf("EXPLOSION!!", assets.fonts.dialogue, 680, 65, 320)
+  end
+
+  if worldData.state == enums.game_states.WIN then
+    love.graphics.setColor(0, 0, 1, 0.5)
+    love.graphics.rectangle('fill', 0, 0, 1024, 768)
+    love.graphics.setColor(1, 1, 1, 1)
+    print_header("You win!", 400, 300)
+    print_header("Press 'r' to play again", 300, 400)
+    print_header("or 'ESC' to quit.", 300, 450)
+  end
 
 end
 
