@@ -302,7 +302,7 @@ function love.update(dt)
 
   ]]--
 
-  if love.keyboard.isDown('lalt') and keyState.alt.pressed == false then
+  if love.keyboard.isDown('`') and keyState.accent.pressed == false then
     if worldData.state == enums.game_states.DIALOGUE or worldData.state == enums.game_states.MAIN_ACTION then
       worldData.state = enums.game_states.DEBUG
       print("DEBUG MODE. W/A/S/D enabled")
@@ -310,7 +310,7 @@ function love.update(dt)
       worldData.state = enums.game_states.MAIN_ACTION
       print("MAIN ACTION MODE. W/A/S/D disabled")
     end
-    keyState.alt.pressed = true
+    keyState.accent.pressed = true
   end
 
   -- end program
@@ -323,10 +323,10 @@ function love.update(dt)
     love.event.quit("restart")
   end
 
-  if not love.keyboard.isDown('p') then
-    keyState.p.pressed = false
+  if not love.keyboard.isDown('space') then
+    keyState.space.pressed = false
   end
-  
+
 
   if worldData.state == enums.game_states.DIALOGUE then
     local full_len = string.len(worldData.current_dialogue.text)
@@ -345,17 +345,10 @@ function love.update(dt)
     end
   end
 
-  if love.keyboard.isDown('p')
-    and not keyState.p.pressed
-    and worldData.state == enums.game_states.MAIN_ACTION then
-    -- TODO: wrap all of game loop in game state check to make sure we're handling input right
-    keyState.p.pressed = true
-    display_dialogue(dialogue.introduction)
-  end
-  if love.keyboard.isDown('p')
+  if love.keyboard.isDown('space')
     and worldData.state == enums.game_states.DIALOGUE
-    and not keyState.p.pressed then
-    keyState.p.pressed = true
+    and not keyState.space.pressed then
+    keyState.space.pressed = true
     advance_dialogue()
   end
 end
@@ -562,9 +555,6 @@ function love.keypressed( key )
   if key == "backspace" then
     text = "Backspace  -- pressed!"
   end
-  if key == "lalt" then
-    text = "Alt  -- pressed!"
-  end
   if key == "return" then
     text = "Enter  -- pressed!"
   end
@@ -613,9 +603,9 @@ function love.keyreleased( key )
     text = "Backspace  -- released!"
     keyState.backspace.pressed = false
   end
-  if key == "lalt" then
-    text = "Alt  -- released!"
-    keyState.alt.pressed = false
+  if key == "`" then
+    text = "`  -- released!"
+    keyState.accent.pressed = false
   end
   if key == "return" then
     text = "Enter  -- released!"
