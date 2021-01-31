@@ -2,9 +2,9 @@
 
 -- global data. declared here, initialized in love.load
 assets = {
-  map = {
-    empty = nil,
-    asteriod = nil,
+  obstacle = {
+    x = nil,
+    y = nil,
   },
   images = {
     background = nil,
@@ -16,10 +16,6 @@ assets = {
     blank = nil,
   },
   player = {
-    right = nil,
-    down = nil,
-    left = nil,
-    right = nil,
   },
   fonts = {
     regular = nil,

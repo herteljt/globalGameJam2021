@@ -10,6 +10,14 @@ function love.load()
   waiting = true
   waitingTimer = 10
 
+  -- obstacles
+  assets.obstacle = {0, 1, 18, 94, 109, 141}
+  numberObstacles = #assets.obstacle -- get size
+  for i, v in ipairs(assets.obstacle) do end -- iterate
+
+
+
+
   -- player
   player.x = 4
   player.y = 3
@@ -34,12 +42,16 @@ function love.load()
   worldData.grid.height = 9
   worldData.grid.border = 0
 
-  -- images
-  assets.images.background = love.graphics.newImage("graphics/background.png")
+
+  -- player
   assets.player.right = love.graphics.newImage("graphics/player_right.png")
   assets.player.down = love.graphics.newImage("graphics/player_down.png")
   assets.player.left = love.graphics.newImage("graphics/player_left.png")
   assets.player.up = love.graphics.newImage("graphics/player_up.png")
+
+
+  -- images
+  assets.images.background = love.graphics.newImage("graphics/background.png")
   assets.images.obstacle = love.graphics.newImage("graphics/obstacle_placeholder.png")
   assets.images.fake_avatar = love.graphics.newImage("graphics/avatar_placeholder.png")
   assets.images.forward = love.graphics.newImage("graphics/forward_placeholder.png")
@@ -47,8 +59,6 @@ function love.load()
   assets.images.right = love.graphics.newImage("graphics/right_placeholder.png")
   assets.images.blank = love.graphics.newImage("graphics/transparent_placeholder.png")
 
-  assets.map.empty = love.graphics.newImage("graphics/empty_space_placeholder.png")
-  assets.map.asteriod = love.graphics.newImage("graphics/obstacle_placeholder.png")
 
   -- fonts
   assets.fonts.regular = love.graphics.newFont("fonts/pixeboy.ttf", 28, "none")
@@ -283,22 +293,29 @@ function love.draw()
   if commandBar.index > 5 then
     love.graphics.printf("Command Queue Full. Execute commands(4) or delete(backspace).", assets.fonts.dialogue, 680, 65, 320)
   end
---  drawMap()
 
-  draw_in_grid(assets.images.obstacle, 1, 1, 0)
-  draw_in_grid(assets.images.obstacle, 13, 4, 0)
-  draw_in_grid(assets.images.obstacle, 13, 5, 0)
-  draw_in_grid(assets.images.obstacle, 12, 6, 0)
+--  draw obstacles
+  for i = 1,numberObstacles do
+    draw_in_grid(assets.images.obstacle,math.floor(assets.obstacle[i]%16),math.floor(assets.obstacle[i]/16))
+  end
+--[[
+  draw_in_grid(assets.images.obstacle, 1, 1)
+  draw_in_grid(assets.images.obstacle, 13, 4)
+  draw_in_grid(assets.images.obstacle, 13, 5)
+  draw_in_grid(assets.images.obstacle, 12, 6)
+]]--
+
 
   if player.facingIndex == 0 then
-    draw_in_grid(assets.player.right, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.right, player.x, player.y)
   elseif player.facingIndex == 1 then
-    draw_in_grid(assets.player.down, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.down, player.x, player.y)
   elseif player.facingIndex == 2 then
-    draw_in_grid(assets.player.left, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.left, player.x, player.y)
   elseif player.facingIndex == 3 then
-    draw_in_grid(assets.player.up, player.x, player.y, player.facingIndex)
+    draw_in_grid(assets.player.up, player.x, player.y)
   end
+
 
   -- Draw Command Bar
   love.graphics.draw(commandBar.image[1], 69, 108, 0, 1, 1, 0, 0, 0, 0)
@@ -362,9 +379,9 @@ end
   end
 ]]--
 
-function draw_in_grid(asset, grid_x, grid_y, facing)
+function draw_in_grid(asset, grid_x, grid_y)
   local x, y = grid_coords_to_pixels(grid_x, grid_y)
-  love.graphics.draw(asset, x, y, 0)
+  love.graphics.draw(asset, x, y)
 end
 
 
@@ -525,7 +542,14 @@ end
 
 -- Check checkCollisions
 
-function checkCollisions ()
+function checkCollisions (x, y, map)
+
+  for i = 1, 9 do
+     for j = 1, 16 do
+
+
+     end
+  end
 
 
 end
