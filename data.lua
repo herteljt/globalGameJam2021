@@ -36,6 +36,7 @@ enums = {
     DIALOGUE = 1,
     EXPLODED = 2,
     DEBUG = 3,
+    RUNNING_COMMAND_QUEUE = 4,
   }
 }
 
@@ -64,6 +65,7 @@ worldData = {
 commandBar = { --Note: indices start at 1 in Love2d rather than 0
 
   index = nil, --keeping track of which command is selected
+  queue_timer = 0,  -- time in seconds since last command executed
 
   command = {
     first = nil, -- 1st command
