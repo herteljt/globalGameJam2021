@@ -344,7 +344,7 @@ function love.update(dt)
     end
   end
 
-  if love.keyboard.isDown('p')
+  if love.keyboard.isDown('space')
     and worldData.state == enums.game_states.DIALOGUE
     and not keyState.p.pressed then
     keyState.p.pressed = true
