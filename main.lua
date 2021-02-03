@@ -13,7 +13,7 @@ function love.load()
 
   assets.obstacle = {}
 
-
+  globalCount = 0 --Variable for keeping track of seconds.
 
   --[[
   -- obstacles
@@ -29,8 +29,10 @@ function love.load()
   -- place number of obstacles randomly on the board.
 
   -- player
-  player.x = love.math.random(0,5)
-  player.y = love.math.random(0,5)
+  --player.x = love.math.random(0,2)
+  --player.y = love.math.random(0,2)
+  player.x = 0
+  player.y = 0
   player.width = 1
   player.height = 1
   player.speed = 1
@@ -104,7 +106,7 @@ function love.load()
 
 
   -- Build world
-  buildLevel(0,141,numberObstacles)
+  buildLevelNew(2,141,numberObstacles) -- start at 2 to avoid player area
 
   print("Game loaded! Let's go.")
 
@@ -151,8 +153,11 @@ function love.update(dt)
 
     -- run a command from commandBar every 1 second
     if commandBar.queue_timer > 1 then
+      globalCount = globalCount + 1
+      moveObstacles(assets.obstacle, numberObstacles, globalCount)
       commandBar.queue_timer = 0
       local idx = commandBar.index
+
 
       if commandBar.command[idx]==1 and player.facingIndex == 0 then
         checkCollisions(player.x+player.step,player.y,assets.obstacle, numberObstacles)
@@ -653,7 +658,6 @@ function advance_dialogue()
 end
 
 -- Build Level
-
 function buildLevel (start, stop, numberObstacles)
   player.gridLocation = player.y*16 + player.x
   goal.gridLocation = goal.y*16 + goal.x
@@ -669,9 +673,25 @@ function buildLevel (start, stop, numberObstacles)
        assets.obstacle[i] = 141
     end
   end
-
 end
 
+-- Build Level New, creates a new 2x2 region no asteriod can spawn TODO: Change so the region can be set and not hardcoded
+function buildLevelNew (start, stop, numberObstacles)
+  player.gridLocation = player.y*16 + player.x
+  goal.gridLocation = goal.y*16 + goal.x
+  print("Player grid location"..player.gridLocation)
+  --player.gridLocation = love.math.random(start, stop)
+
+  for i = 1,numberObstacles do
+    local obstacle = love.math.random(start, stop)
+    if obstacle == player.gridLocation or obstacle == 16 or obstacle == 17 then
+      print("Cannot place obstacle. Player collision conflict.")
+      assets.obstacle[i] = 141
+    else
+      assets.obstacle[i] = obstacle
+    end
+  end
+end
 
 -- Check checkCollisions
 function checkCollisions (x, y, obstacle, number)
@@ -685,6 +705,23 @@ function checkCollisions (x, y, obstacle, number)
     end
   end
 end
+
+-- Move obstacles
+function moveObstacles (obstacle, number, index)
+  for i = 1, number do
+    if index%4 == 0 then
+      assets.obstacle[i] = assets.obstacle[i] + 16
+    elseif index%4 == 1 then
+      assets.obstacle[i] = assets.obstacle[i] + 1
+    elseif index%4 == 2 then
+      assets.obstacle[i] = assets.obstacle[i] - 16
+    else
+      assets.obstacle[i] = assets.obstacle[i] - 1
+    end
+  end
+end
+
+
 
 -- Check Goal
 function checkGoal (playerx, playery, goalx, goaly)
